@@ -1,0 +1,547 @@
+html, body{
+    margin: 0;
+    padding: 0;
+}
+
+
+* {
+    font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;
+}
+
+#content{
+   width: 800px;
+   margin: auto;
+   padding-bottom: 40px;
+}
+
+#header_nav{
+    background-color: #4a76a7;
+}
+#header_nav-center{
+    display: flex;
+   width: 800px;
+   margin: auto;
+}
+.header_nav-menu{
+    color: #ffffff;
+    /*display: inline-block;*/
+    width: 33.3%;
+    font-weight: 400;
+    line-height: 50px;
+    font-size: 25px;
+    text-align: center;
+    font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;
+    cursor: pointer;
+}
+
+.header_nav-menu:hover{
+    background-color: #3d6898;
+}
+
+.header_nav-menu.active, .header_nav-menu.active:hover{
+    background-color: #335e8f;
+}
+
+#content-fb{
+    display: flex;
+}
+
+#fb-left{
+    width: 70%;
+}
+#fb-right{
+    width: 30%;
+}
+
+#fb-search {
+    margin: 10px 0 10px;
+}
+
+#fb-search > input{
+    background: transparent;
+    border: 0;
+    display: block;
+    width: 100%;
+    padding: 10px 32px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background: url(images/search_icon.png) no-repeat scroll 5px 10px;
+}
+
+#fb-search > input:focus{
+    outline-width: 0;
+}
+#fb-search > input::placeholder{
+    color: #8c8c8c;
+}
+#fb-search > input:focus::placeholder{
+    color: #bfbfbf;
+}
+
+#fb-book_list, #mb-book_list{
+    display: grid;
+    flex-wrap: wrap;
+    grid-column-gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 20px;
+    row-gap: 20px;
+}
+
+.fb-book_item, .mb-book_item{
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 40%;
+    border: 1px solid #5181b8;
+    box-shadow: 0px 1px 4px rgba(160, 160, 199, 0.38);
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: box-shadow 300ms;
+    align-self: start;
+}
+
+.fb-book_item-owner, .mb-book_item-owner{
+    display: flex;
+    text-decoration-line: none;
+    padding: 4px 8px;
+    border-bottom: 1px solid #5181b8;
+    background-color: #dee6ef;
+}
+.fb-book_item-owner>span, .mb-book_item-owner>span{
+    line-height: 35px;
+    display: inline-block;
+    margin-left: 10px;
+    color: #2a5885;
+    text-decoration-line: none;
+    font-weight: 900;
+    font-size: 14px;
+    font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;
+}
+
+.fb-book_item-owner> img, .mb-book_item-owner> img{
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+}
+
+.fb-book_item_image, .mb-book_item_image{
+    text-align: center;
+    margin-top: 6px;
+}
+
+.fb-book_item-image_img, .mb-book_item-image_img{
+    max-width: 150px;
+    max-height: 300px;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.04);
+    border-radius: 4px;
+}
+
+.fb-book_item-title, .mb-book_item-title{
+    font-family: 'PT Sans',sans-serif;
+    font-size: 16px;
+    padding: 8px 8px 0;
+}
+.fb-book_item-author, .mb-book_item-author{
+    font-family: 'PT Sans',sans-serif;
+    font-size: 16px;
+    padding: 4px 8px 0;
+    color: rgba(0,0,0,0.3);
+    margin-bottom: 4px;
+}
+
+.fb-book_item-comment, .mb-book_item-comment{
+    font-family: 'PT Sans',sans-serif;
+    font-size: 13px;
+    border-top: 1px solid #eee;
+    padding: 8px;
+    font-style: italic;
+}
+
+.fb-friends_list_list{
+
+}
+
+#fb-friends_list_list > ul > li{
+    font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    color: #656565;
+
+    display: block;
+    height: 32px;
+    line-height: 31px;
+    cursor: pointer;
+    padding: 0 5px 0 28px;
+}
+
+#fb-friends_list_list > ul > li:hover{
+    background-color: #edeef0;
+}
+
+#fb-friends_list_list > ul > li.selected{
+    border-right: 2px solid #5181b8;
+    font-weight: 800;
+    color: #000;
+    background-color: #edeef0;
+}
+
+.fb-friends_list-item{
+    display: flex;
+    text-decoration-line: none;
+    cursor: pointer;
+    border-radius: 24px 0 0 24px;
+}
+
+.fb-friends_list-item:hover{
+    background-color: #edeef0;
+}
+
+.fb-friends_list-item > span{
+    line-height: 35px;
+    display: inline-block;
+    margin-left: 10px;
+    text-decoration-line: none;
+    font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    color: #656565;
+}
+
+.fb-friends_list-item > img{
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    margin: 2px 0;
+}
+
+.fb-friends_list-item.selected{
+    border-right: 2px solid #5181b8;
+    background-color: #edeef0;
+}
+.fb-friends_list-item.selected > span{
+    font-weight: 800;
+    color: #000;
+}
+
+
+
+
+#mb-privacy_settings-left{
+    width: 400px;
+    display: inline-block;
+    vertical-align: top;
+}
+#mb-privacy_settings-right {
+    width: 350px;
+    display: inline-block;
+
+}
+
+#mb-privacy_settings-right > select{
+    width: 200px;
+    font-size: 16px;
+    height: 34px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    color: #2a5885;
+    text-decoration: none;
+    cursor: pointer;
+}
+#mb-privacy_settings-right > select:focus{
+    outline: none;
+}
+
+#mb-privacy_settings-accepted_list{
+    font-size: 12px;
+}
+
+#mb-add_book-form-inputs{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-row-gap: 20px;
+}
+#mb-add_book-form-inputs> label{
+    display: inline-block;
+}
+
+#mb-add_book-form-inputs > input[type="text"]{
+    border: none;
+    border-bottom: 1px solid #333;
+}
+
+#mb-add_book-form-inputs > input[type="text"]:focus{
+    outline-width: 0;
+}
+#mb-add_book-form-inputs > input[type="text"]::placeholder{
+    color: #8c8c8c;
+}
+#mb-add_book-form-inputs > input[type="text"]:focus::placeholder{
+    color: #bfbfbf;
+}
+
+#mb-add_book-form-submit{
+    margin-top: 20px;
+    text-align: right;
+}
+
+.button{
+    padding: 7px 16px 8px;
+    margin: 0;
+    font-size: 12.5px;
+    display: inline-block;
+    zoom: 1;
+    cursor: pointer;
+    white-space: nowrap;
+    outline: none;
+    vertical-align: top;
+    line-height: 15px;
+    text-align: center;
+    text-decoration: none;
+    background: none;
+    background-color: #5181b8;
+    color: #fff;
+    border-radius: 4px;
+    box-sizing: border-box;
+    border: 1px solid #304b6b;
+}
+.button:active {
+    background-color: #4872a3;
+    padding-top: 8px;
+    padding-bottom: 7px;
+}
+.button:hover {
+    background-color: #5b88bd;
+    text-decoration: none;
+}
+#mb-book_list{
+    width: 70%;
+}
+.mb-book_item-actions > div > button {
+    width: 100%;
+    height: 100%;
+    text-align: left;
+}
+
+.mb-book_item-edit > button, .mb-book_item-active > button {
+    border-radius: 0 ;
+}
+
+.mb-book_item-delete > button {
+    border-radius: 0 0 2px 2px;
+}
+
+
+#mb-friends_whitelist, #mb-friends_list_whitelist{
+    position: absolute;
+    top: 120px;
+    width: 560px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+
+
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,.35);
+    outline: none;
+    background-color: #fff;
+}
+
+#mb-friends_whitelist-header, #mb-friends_list_whitelist-header{
+    background-color: #5b88bd;
+    color: #fff;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+}
+
+#mb-friends_whitelist-header-title, #mb-friends_list_whitelist-header-title{
+    padding-left: 25px;
+    font-size: 14px;
+    color: #fff;
+    height: 54px;
+    line-height: 54px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 250px;
+    display: inline-block;
+}
+
+#mb-friends_whitelist_header-close, #mb-friends_list_whitelist_header-close{
+    float: right;
+    padding: 21px 25px 21px 12px;
+    background: url(images/close.png) no-repeat 12px 21px;
+    width: 12px;
+    height: 12px;
+    opacity: 0.75;
+    cursor: pointer;
+    outline: none;
+}
+
+#mb-friends_whitelist-search{
+    border-bottom: 1px solid #e6e7eb;
+}
+#mb-friends_whitelist-search > div{
+    display: inline-block;
+}
+#mb-friends_whitelist-search-form {
+    margin: 0 0 0 10px;
+    width: 360px;
+}
+
+#mb-friends_whitelist-search-form > input{
+    background: transparent;
+    border: 0;
+    display: block;
+    width: 100%;
+    padding: 10px 32px;
+    font-size: 13px;
+    box-sizing: border-box;
+    background: url(images/search_icon.png) no-repeat scroll 5px 10px;
+}
+
+#mb-friends_whitelist-search-form > input:focus{
+    outline-width: 0;
+}
+#mb-friends_whitelist-search-form > input::placeholder{
+    color: #94a2bb
+}
+#mb-friends_whitelist-search-form > input:focus::placeholder{
+    color: #c0cce1
+}
+#mb-friends_whitelist-search-shower{
+    color: #939393;
+    line-height: 19px;
+    width: 170px;
+    font-size: 13px;
+}
+
+#mb-friends_whitelist-search-shower > span{
+    margin-right: 5px;
+}
+
+.ui_toggle{
+    width: 28px;
+    height: 9px;
+    border-radius: 45px;
+    background-color: #ced7e0;
+    cursor: pointer;
+    line-height: 19px;
+    display: inline-block;
+}
+.ui_toggle:after {
+    content: '';
+    position: relative;
+    float: left;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 1px solid #b4bfcc;
+    border-top-color: rgb(180, 191, 204);
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-right-color: rgb(180, 191, 204);
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-bottom-color: rgb(180, 191, 204);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-left-color: rgb(180, 191, 204);
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-image-source: initial;
+    border-image-slice: initial;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    background-color: #fff;
+    top: -3px;
+    left: 0;
+    -o-transition: left 0.1s ease;
+    transition: left 0.1s ease;
+}
+
+
+.ui_toggle.selected{
+    background-color: #bccde0;
+}
+.ui_toggle.selected:after {
+    background-color: #5181b8;
+    border-color: #5181b8;
+    border-top-color: rgb(81, 129, 184);
+    border-right-color: rgb(81, 129, 184);
+    border-bottom-color: rgb(81, 129, 184);
+    border-left-color: rgb(81, 129, 184);
+    left: 13px;
+}
+
+#mb-friends_whitelist-friends_list, #mb-friends_list_whitelist-friends_list{
+    height: 400px;
+    overflow-y: scroll;
+}
+.mb-friends_whitelist-friends_list-item, .mb-friends_list_whitelist-friends_list-item{
+    padding: 10px 20px;
+    display: flex;
+    border-bottom: 1px solid #e6e7eb;
+    position: relative;
+}
+.mb-friends_whitelist-friends_list-item > img, .mb-friends_list_whitelist-friends_list-item > img{
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+}
+
+.mb-friends_whitelist-friends_list-item > span, .mb-friends_list_whitelist-friends_list-item > span{
+    line-height: 35px;
+    display: inline-block;
+    margin-left: 10px;
+    text-decoration-line: none;
+    font-family: -apple-system,BlinkMacSystemFont,Roboto,Helvetica Neue,sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    color: #656565;
+}
+
+.friend_checkbox, .friends_list_checkbox{
+    position: absolute;
+    right: 25px;
+    margin: 6px 5px 0 0;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    box-shadow: 0 0 0 1px #c4ccd4 inset;
+    border-radius: 100%;
+    cursor: pointer;
+}
+.friend_checkbox.selected, .friends_list_checkbox.selected{
+    background: url(images/selected.svg) no-repeat 0;
+    box-shadow: none;
+}
+.friend_checkbox:after, .friends_list_checkbox:after{
+    content: '.';
+    display: block;
+    height: 0;
+    font-size: 0;
+    line-height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+#mb-friends_whitelist-control, #mb-friends_list_whitelist-control{
+    background-color: #fafbfc;
+    text-align: right;
+    border-top: 1px solid #e6e7eb;
+    border-radius: 0 0 4px 4px;
+    padding: 10px 15px;
+}
+
+.button.transparent{
+    background: none;
+    border: none;
+    color: #304b6b;
+}
