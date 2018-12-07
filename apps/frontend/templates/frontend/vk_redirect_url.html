@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <form id="form">
+    {% csrf_token %}
+
+    </form>
+
+    <script>
+        function redirectPost(url, data) {
+            var form = document.getElementById('form');
+            document.body.appendChild(form);
+            form.method = 'post';
+            form.action = url;
+            for (var name in data) {
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = data[name];
+                form.appendChild(input);
+            }
+            form.submit();
+        }
+
+
+        var hash = window.location.hash.substring(1);
+        var params = {}
+        hash.split('&').map(hk => {
+          let temp = hk.split('=');
+            params[temp[0]] = temp[1]
+        });
+
+        redirectPost('http://127.0.0.1:8000/vk_redirect_uri/', params);
+    </script>
+</body>
+</html>

@@ -19,6 +19,20 @@ class Account(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __unicode__(self):
+        return self.vk_id
+
+
+class VkSession(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    access_token = models.CharField(max_length=255)
+    expires_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return self.account
+
 
 class WhiteListOfFriendsLists(models.Model):
     owner_id = models.ForeignKey(Account, on_delete=models.CASCADE)
