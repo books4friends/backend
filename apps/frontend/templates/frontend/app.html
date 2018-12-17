@@ -18,7 +18,7 @@
     </div>
 </div>
 <div id="content">
-    <div id="content-fb">
+    <div id="content-fb"  style="display: none">
         <div id="fb-left">
             <div id="fb-search">
                 <input type="text" placeholder="Поиск">
@@ -106,7 +106,7 @@
             </div>
         </div>
     </div>
-    <div id="content-mb"  style="display: none">
+    <div id="content-mb">
         <div id="mb-privacy_settings">
             <h2>Настройка приватности</h2>
             <div id="mb-privacy_settings-left">
@@ -125,13 +125,59 @@
             <form id="mb-add_book-form">
                 <h2>Добавить книгу</h2>
                 <div id="mb-add_book-form-inputs">
-                    <label for="title">Название*</label>
-                    <input name="title" id="title" type="text" placeholder="Название">
-                    <label for="author">Автор*</label>
-                    <input name="author" id="author" type="text" placeholder="Автор">
-                    <label for="comment">Комментарий</label>
-                    <input name="comment" id="comment" type="text" placeholder="Комментарий">
+                    <label for="add_title">Название*</label>
+                    <div id="add_title_div">
+                        <input name="title" id="add_title" type="text" placeholder="Название">
+
+                        <div id="google_books_suggestion">
+                            <div class="google_book">
+                                <span class="google_book-author">Жан Пюри</span>
+                                <span class="google_book-title">Маленький сын</span>
+                            </div>
+                            <div class="google_book">
+                                <span class="google_book-author">Лана Перишная</span>
+                                <span class="google_book-title">Маленький сын</span>
+                            </div>
+                            <div class="google_book">
+                                <span class="google_book-author">Жан Пюри</span>
+                                <span class="google_book-title">Маленький сын</span>
+                            </div>
+                            <div class="google_book">
+                                <span class="google_book-author">Жан Пюри</span>
+                                <span class="google_book-title">Маленький сын</span>
+                            </div>
+                            <div class="google_book">
+                                <span class="google_book-author">Жан Пюри</span>
+                                <span class="google_book-title">Маленький сын</span>
+                            </div>
+                        </div>
+                    </div>
+                    <label for="add_author">Автор*</label>
+                    <input name="author" id="add_author" type="text" placeholder="Автор">
+                    <label for="add_comment">Комментарий</label>
+                    <input name="comment" id="add_comment" type="text" placeholder="Комментарий">
+                    <input name="google_id" id="add_google_id" type="hidden">
                 </div>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+                <script>
+                    $('#add_title').on('change keyup', function(e){
+                        $.ajax({
+                            url:"https://www.googleapis.com/books/v1/volumes?q=" + this.value + "&maxResults=10",
+                            success: function(data){
+                                console.log(data.items);
+                                for(var i=0; i<data.items.length; i++){
+                                    if (data.items[i].volumeInfo.hasOwnProperty("authors")){
+                                        console.log(data.items[i].volumeInfo.authors[0]+data.items[i].volumeInfo.title);
+                                    }else{
+                                        console.log(data.items[i].volumeInfo.title);
+                                    }
+                                }
+                            }
+                        })
+                        console.log();
+                    });
+
+                </script>
                 <div id="mb-add_book-form-submit"><input type="submit" class="button" value="Добавить"></div>
             </form>
         </div>

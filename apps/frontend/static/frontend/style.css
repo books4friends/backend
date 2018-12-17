@@ -265,23 +265,29 @@ html, body{
     grid-template-columns: repeat(2, 1fr);
     grid-row-gap: 20px;
 }
-#mb-add_book-form-inputs> label{
+#mb-add_book-form-inputs label{
     display: inline-block;
 }
 
-#mb-add_book-form-inputs > input[type="text"]{
+#mb-add_book-form-inputs input[type="text"]{
     border: none;
     border-bottom: 1px solid #333;
+    width: 100%;
 }
 
-#mb-add_book-form-inputs > input[type="text"]:focus{
+#mb-add_book-form-inputs input[type="text"]:focus{
     outline-width: 0;
 }
-#mb-add_book-form-inputs > input[type="text"]::placeholder{
+#mb-add_book-form-inputs input[type="text"]::placeholder{
     color: #8c8c8c;
 }
-#mb-add_book-form-inputs > input[type="text"]:focus::placeholder{
+#mb-add_book-form-inputs input[type="text"]:focus::placeholder{
     color: #bfbfbf;
+}
+
+#add_title_div{
+    width: 100%;
+    position: relative;
 }
 
 #mb-add_book-form-submit{
@@ -544,4 +550,32 @@ html, body{
     background: none;
     border: none;
     color: #304b6b;
+}
+
+
+#google_books_suggestion{
+    position: absolute;
+    width: 400px;
+    top: 22px;
+    background-color: #fff;
+    border: 1px solid #c7c7c7;
+    border-radius: 0 0 4px 4px;
+    box-sizing: border-box;
+}
+
+.google_book{
+    padding: 5px 3px 3px 10px;
+    border-bottom: 1px solid #c7c7c7;
+    cursor: pointer;
+}
+
+.google_book:last-child{
+    border: none;
+}
+.google_book:hover{
+    background-color: #f7f7f7;
+}
+
+.google_book-author{
+    font-weight: bold;
 }
