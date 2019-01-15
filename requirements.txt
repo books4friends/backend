@@ -3,3 +3,4 @@ gunicorn==19.9.0
 psycopg2-binary==2.7.5
 pytz==2018.5
 vk==2.0.2
+ipython=7.2.0
