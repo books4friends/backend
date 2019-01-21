@@ -4,6 +4,7 @@ __pycache__/
 project/settings/local.py
 
 staticfiles/*
+media/*
 
 apps/frontend/webpack-stats.json
 apps/frontend/static/frontend/app/

@@ -6,4 +6,5 @@ from django.conf.urls import include, url
 urlpatterns = [
     path('admin/', admin.site.urls),
     url('', include('apps.frontend.urls')),
+    url(r'^app/api/books/', include('apps.books.urls')),
 ]
