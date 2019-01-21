@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'apps.accounts',
     'apps.books',
     'apps.frontend',
-    'apps.frontend_app',
 ]
 
 MIDDLEWARE = [

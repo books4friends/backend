@@ -18,12 +18,20 @@ class VkRedirectUrl(View):
         if access_token and expires_in and vk_id:
             account, _ = Account.objects.get_or_create(vk_id=vk_id)
             expires_at = datetime.datetime.now() + datetime.timedelta(seconds=int(expires_in))
-            VkSession.objects.create(account=account, access_token=access_token, expires_at=expires_at)
+            vk_session = VkSession.objects.create(account=account, access_token=access_token, expires_at=expires_at)
 
             request.session['access_token'] = access_token
+            request.session['account_id'] = account.id
             request.session['vk_id'] = vk_id
 
             return redirect('app')
         else:
             pass
 
+
+class AppView(View):
+    def get(self, request, *args, **kwargs):
+        if request.session.get('vk_id') and request.session.get('access_token'):
+            return render(request, template_name='frontend/app.html')
+        else:
+            return redirect('login-form')

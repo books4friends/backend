@@ -10,8 +10,9 @@ class BookDetail(models.Model):
         (SOURCE.GOOGLE, 'google'),
     )
     title = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
-    image = models.FileField(upload_to='books/', null=True)
+    author = models.CharField(max_length=255, null=True, blank=True)
+    image = models.ImageField(upload_to='books/', null=True)
+    image_external_url = models.URLField(max_length=512, null=True, blank=True)
     source = models.SmallIntegerField(choices=SOURCE_CHOICES, default=SOURCE.CUSTOM)
     external_id = models.CharField(max_length=255, unique=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
