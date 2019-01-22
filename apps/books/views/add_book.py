@@ -13,7 +13,7 @@ from apps.utils.auth import auth_decorator
 from ..serializers import BookItemSerializer
 from ..forms import AddBookForm
 
-from ..models import BookDetail, BookItem
+from ..models import BookDetail, BookItem, BookItemAudit
 
 
 GOOGLE_VOLUME_API = "https://www.googleapis.com/books/v1/volumes/{}"
@@ -39,6 +39,8 @@ class AddBookView(View):
                 account_id=self.request.session['account_id'],
                 comment=form.cleaned_data['comment']
             )
+            BookItemAudit.create_audit(book_item, self.request.session.get('vk_session_id'),
+                                       BookItemAudit.ACTION_TYPE.ADD)
             return JsonResponse({'success': True, 'book': BookItemSerializer.serialize(book_item)})
         else:
             return JsonResponse({'success': False, 'errors': form.errors})

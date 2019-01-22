@@ -1,5 +1,11 @@
 from django.db import models
 
+import json
+
+from django.core.serializers.json import DjangoJSONEncoder
+
+from apps.accounts.models import VkSession
+
 
 class BookDetail(models.Model):
     class SOURCE:
@@ -40,15 +46,34 @@ class BookItem(models.Model):
 
 class BookItemAudit(models.Model):
     class ACTION_TYPE(object):
-        ADDED = 0
-        UPDATED = 1
+        ADD = 0
+        ACTIVATE = 1
+        DEACTIVATE = 2
+        UPDATE_COMMENT = 3
+        DELETE = 4
 
     ACTION_TYPE_CHOICES = (
-        (ACTION_TYPE.ADDED, 'added'),
-        (ACTION_TYPE.UPDATED, 'updated'),
+        (ACTION_TYPE.ADD, 'add'),
+        (ACTION_TYPE.ACTIVATE, 'activate'),
+        (ACTION_TYPE.DEACTIVATE, 'deactivate'),
+        (ACTION_TYPE.UPDATE_COMMENT, 'update_comment'),
+        (ACTION_TYPE.DELETE, 'delete'),
     )
 
-    book_detail = models.ForeignKey('BookDetail', on_delete=models.CASCADE)
+    book_item = models.ForeignKey('BookItem', on_delete=models.CASCADE)
+    vk_session = models.ForeignKey(VkSession, on_delete=models.PROTECT)
     action_type = models.SmallIntegerField(choices=ACTION_TYPE_CHOICES)
-    description = models.CharField(max_length=255, blank=True, null=True)
+    dump = models.TextField("Dump")
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @classmethod
+    def create_audit(cls, book_item, vk_session_id, action_type):
+        log = BookItemAudit()
+        log.book_item = book_item
+        log.vk_session_id = vk_session_id
+        log.action_type = action_type
+        log.dump = json.dumps(
+            list(BookItem.objects.filter(id=book_item.id).values()),
+            cls=DjangoJSONEncoder
+        )
+        log.save()
