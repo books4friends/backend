@@ -6,3 +6,4 @@ vk==2.0.2
 ipython=7.2.0
 Pillow=5.4.1
 requests==2.20.1
+django-redis=4.10.0
