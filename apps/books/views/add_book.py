@@ -9,6 +9,8 @@ from django.views import View
 from django.core.files import File
 
 from apps.utils.auth import auth_decorator
+
+from ..serializers import BookItemSerializer
 from ..forms import AddBookForm
 
 from ..models import BookDetail, BookItem
@@ -37,7 +39,7 @@ class AddBookView(View):
                 account_id=self.request.session['account_id'],
                 comment=form.cleaned_data['comment']
             )
-            return JsonResponse({'success': True, 'book': {'id': book_detail.id, 'title': book_detail.title }})
+            return JsonResponse({'success': True, 'book': BookItemSerializer.serialize(book_item)})
         else:
             return JsonResponse({'success': False, 'errors': form.errors})
 
