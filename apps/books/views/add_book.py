@@ -1,17 +1,15 @@
 import json
 import requests
-import urllib.request
-import imghdr
 import logging
 
 from django.http.response import JsonResponse
 from django.views import View
-from django.core.files import File
 
 from apps.utils.auth import auth_decorator
 
 from ..serializers import BookItemSerializer
 from ..forms import AddBookForm
+from ..tasks import download_exteranl_image
 
 from ..models import BookDetail, BookItem, BookItemAudit
 
@@ -60,11 +58,8 @@ class AddBookView(View):
                 author=google_data['author'],
                 image_external_url=google_data['image_url'],
             )
-            image = urllib.request.urlretrieve(google_data['image_url'],)
-            file = File(open(image[0], 'rb'))
-            file_name = "{}_small.{}".format(google_id, imghdr.what(file))
-            book_detail.image.save(file_name, file)
             book_detail.save()
+            download_exteranl_image.delay(book_detail.id)
         return book_detail
 
     def _get_or_create_custom_book(self, form):
