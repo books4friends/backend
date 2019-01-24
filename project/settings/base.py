@@ -129,3 +129,6 @@ STATIC_URL = '/static/'
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
+
+BROKER_URL = 'redis://localhost:6379'
+RESULT_BACKEND = 'redis://localhost:6379'
