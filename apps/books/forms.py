@@ -6,3 +6,7 @@ class AddBookForm(forms.Form):
     author = forms.CharField(max_length=255, required=False)
     comment = forms.CharField(max_length=1024, required=False)
     external_id = forms.CharField(max_length=255, required=False)
+
+
+class EditBookItemCommentForm(forms.Form):
+    comment = forms.CharField(max_length=1024, required=True)
