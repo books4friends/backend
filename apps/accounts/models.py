@@ -9,7 +9,7 @@ class Account(models.Model):
         ONLY_SOME_FRIENDS_LISTS = 3
     VISIBILITY_TYPE_CHOICES = (
         (VISIBILITY_TYPE.ALL_FRIENDS, 'all friends'),
-        (VISIBILITY_TYPE.ONLY_OWNER, 'all friends'),
+        (VISIBILITY_TYPE.ONLY_OWNER, 'only me'),
         (VISIBILITY_TYPE.ONLY_SOME_FRIENDS, 'only some friends'),
         (VISIBILITY_TYPE.ONLY_SOME_FRIENDS_LISTS, 'only some friends lists'),
     )
