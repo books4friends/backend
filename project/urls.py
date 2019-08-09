@@ -7,4 +7,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url('', include('apps.frontend.urls')),
     url(r'^app/api/books/', include('apps.books.urls')),
+    url(r'^app/api/settings/', include('apps.accounts.urls')),
 ]
