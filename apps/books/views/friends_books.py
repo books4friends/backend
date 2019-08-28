@@ -79,13 +79,14 @@ class GetFiltersView(View):
     def _generate_cities_list(cls, friends_list):
         cities = {}
         for friend in friends_list:
-            if not friend['city']['id'] in cities:
-                cities[friend['city']['id']] = {
-                    'id': friend['city']['id'],
-                    'title': friend['city']['title'],
-                    'count': 0
-                }
-            cities[friend['city']['id']]['count'] += 1
+            if friend['city'] is not None:
+                if not friend['city']['id'] in cities:
+                    cities[friend['city']['id']] = {
+                        'id': friend['city']['id'],
+                        'title': friend['city']['title'],
+                        'count': 0
+                    }
+                cities[friend['city']['id']]['count'] += 1
         cities = sorted(list(cities.values()), key=lambda c: c['count'], reverse=True)
         return cities
 
