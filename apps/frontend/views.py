@@ -20,6 +20,7 @@ class VkRedirectUrl(View):
             expires_at = datetime.datetime.now() + datetime.timedelta(seconds=int(expires_in))
             vk_session = VkSession.objects.create(account=account, access_token=access_token, expires_at=expires_at)
 
+            request.session.set_expiry(int(expires_in))
             request.session['vk_session_id'] = vk_session.id
             request.session['access_token'] = access_token
             request.session['account_id'] = account.id
