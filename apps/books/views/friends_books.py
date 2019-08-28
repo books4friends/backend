@@ -4,6 +4,7 @@ import uuid
 import re
 import operator
 from functools import reduce
+from constance import config
 
 from django.db.models import Q, F, Value
 from django.db.models.functions import Concat
@@ -14,8 +15,6 @@ from apps.utils.auth import auth_decorator
 from ..models import BookItem
 from ...vk_service.api import get_friends_list
 from ...accounts.models import Account
-
-TOKEN_TIMEOUT = 15 * 60
 
 
 def friends_decorator(function):
@@ -48,7 +47,7 @@ def friends_decorator(function):
             friends_list = _create_friends_list(request.session)
             token = uuid.uuid4()
             key = "{}_{}".format(token, account_id)
-            cache.set(key, friends_list, timeout=TOKEN_TIMEOUT)
+            cache.set(key, friends_list, timeout=config.CASH_TOKEN_TIMEOUT)
         else:
             friends_list = cache.get(key)
 
@@ -92,8 +91,6 @@ class GetFiltersView(View):
 
 
 class GetFriendsBooksListView(View):
-    DEFAULT_COUNT = 10
-
     @auth_decorator
     @friends_decorator
     def get(self, request, friends_list, *args, **kwargs):
@@ -115,7 +112,7 @@ class GetFriendsBooksListView(View):
 
         offset = request.GET.get('offset', 0)
         offset = int(offset)
-        count = request.GET.get('count', self.DEFAULT_COUNT)
+        count = request.GET.get('count', config.BOOKS_AMOUNT_PER_PAGE)
         books = books[offset: offset+count]
 
         return self._serialize_books(books, friends_list)
