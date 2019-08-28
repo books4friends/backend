@@ -15,7 +15,7 @@ from ..models import BookItem
 from ...vk_service.api import get_friends_list
 from ...accounts.models import Account
 
-TOKEN_TIMEOUT = 30 #15 * 60
+TOKEN_TIMEOUT = 15 * 60
 
 
 def friends_decorator(function):
