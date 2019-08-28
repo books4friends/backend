@@ -15,6 +15,8 @@ from ..models import BookItem
 from ...vk_service.api import get_friends_list
 from ...accounts.models import Account
 
+TOKEN_TIMEOUT = 30 #15 * 60
+
 
 def friends_decorator(function):
     def _create_friends_list(session):
@@ -40,12 +42,15 @@ def friends_decorator(function):
 
     def wrap(self, request, *args, **kwargs):
         token = request.GET.get('token')
-        if not token or token not in request.session:
+        account_id = request.GET.get('account_id')
+        key = "{}_{}".format(token, account_id)
+        if not token or not cache.has_key(key):
             friends_list = _create_friends_list(request.session)
             token = uuid.uuid4()
-            request.session[str(token)] = friends_list
+            key = "{}_{}".format(token, account_id)
+            cache.set(key, friends_list, timeout=TOKEN_TIMEOUT)
         else:
-            friends_list = request.session[token]
+            friends_list = cache.get(key)
 
         response = function(self, request, friends_list, *args, **kwargs)
         if isinstance(response, dict):
