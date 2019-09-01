@@ -33,6 +33,14 @@ class VkRedirectUrl(View):
             pass
 
 
+class RootView(View):
+    def get(self, request, *args, **kwargs):
+        if request.session.get('vk_id') and request.session.get('access_token'):
+            return redirect('app')
+        else:
+            return render(request, template_name='frontend/login_form.html')
+
+
 class LogoutView(View):
     @auth_decorator
     def post(self, request, *args, **kwargs):
