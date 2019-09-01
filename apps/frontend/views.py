@@ -2,8 +2,10 @@ import datetime
 
 from django.shortcuts import render, redirect
 from django.views import View
+from django.http.response import JsonResponse
 
 from apps.accounts.models import Account, VkSession
+from apps.utils.auth import auth_decorator
 
 
 class VkRedirectUrl(View):
@@ -29,6 +31,17 @@ class VkRedirectUrl(View):
             return redirect('app')
         else:
             pass
+
+
+class LogoutView(View):
+    @auth_decorator
+    def post(self, request, *args, **kwargs):
+        del request.session['vk_session_id']
+        del request.session['access_token']
+        del request.session['account_id']
+        del request.session['vk_id']
+
+        return JsonResponse({'success': True})
 
 
 class AppView(View):
