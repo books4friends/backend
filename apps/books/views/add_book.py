@@ -20,8 +20,7 @@ GOOGLE_VOLUME_API = "https://www.googleapis.com/books/v1/volumes/{}"
 class AddBookView(View):
     @auth_decorator
     def post(self, request, *args, **kwargs):
-        data = json.loads(request.body.decode('utf-8'))
-        form = AddBookForm(data)
+        form = AddBookForm(request.POST, request.FILES)
         if form.is_valid():
             if form.cleaned_data['external_id']:
                 try:
@@ -63,11 +62,19 @@ class AddBookView(View):
         return book_detail
 
     def _get_or_create_custom_book(self, form):
-        book_detail, _ = BookDetail.objects.get_or_create(
-            source=BookDetail.SOURCE.CUSTOM,
-            title=form.cleaned_data['title'],
-            author=form.cleaned_data['author'],
-        )
+        if form.cleaned_data['image']:
+            book_detail = BookDetail.objects.create(
+                source=BookDetail.SOURCE.CUSTOM,
+                title=form.cleaned_data['title'],
+                author=form.cleaned_data['author'],
+                image=form.cleaned_data['image']
+            )
+        else:
+            book_detail, _ = BookDetail.objects.get_or_create(
+                source=BookDetail.SOURCE.CUSTOM,
+                title=form.cleaned_data['title'],
+                author=form.cleaned_data['author']
+            )
         return book_detail
 
     def _get_google_book(self, google_id):

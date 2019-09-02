@@ -16,7 +16,7 @@ class BookItemSerializer:
             "description":{
                 "title": book.detail.title,
                 "author": book.detail.author,
-                "image": book.detail.image_external_url
+                "image": book.detail.image.url if book.detail.image.name else None,
             },
             "comment": book.comment,
             "active": book.status == BookItem.STATUS.ACTIVE,
