@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'constance',
+    'sorl.thumbnail',
 
     'apps.accounts',
     'apps.books',

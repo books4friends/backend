@@ -6,6 +6,8 @@ from django.http.response import JsonResponse
 from django.views import View
 
 from apps.utils.auth import auth_decorator
+from sorl.thumbnail import get_thumbnail
+from PIL import Image
 
 from ..serializers import BookItemSerializer
 from ..forms import AddBookForm
@@ -62,13 +64,22 @@ class AddBookView(View):
         return book_detail
 
     def _get_or_create_custom_book(self, form):
+        from io import BytesIO
+        from django.core.files import File
+
         if form.cleaned_data['image']:
+            image = Image.open(form.cleaned_data['image'])
+            size = 170, 250
+            image.thumbnail(size)
+            blob = BytesIO()
+            image.save(blob, 'JPEG')
+
             book_detail = BookDetail.objects.create(
                 source=BookDetail.SOURCE.CUSTOM,
                 title=form.cleaned_data['title'],
-                author=form.cleaned_data['author'],
-                image=form.cleaned_data['image']
+                author=form.cleaned_data['author']
             )
+            book_detail.image.save('book_{}.jpg'.format(book_detail.id), File(blob), save=False)
         else:
             book_detail, _ = BookDetail.objects.get_or_create(
                 source=BookDetail.SOURCE.CUSTOM,

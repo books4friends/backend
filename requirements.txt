@@ -8,3 +8,4 @@ Pillow=5.4.1
 requests==2.20.1
 django-redis=4.10.0
 celery=4.2.1
+sorl-thumbnail==12.5.0

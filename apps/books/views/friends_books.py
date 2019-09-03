@@ -12,6 +12,7 @@ from django.core.cache import cache
 from django.http.response import JsonResponse
 
 from apps.utils.auth import auth_decorator
+
 from ..models import BookItem
 from ...vk_service.api import get_friends_list
 from ...accounts.models import Account
