@@ -79,12 +79,13 @@ class AddBookView(View):
                 title=form.cleaned_data['title'],
                 author=form.cleaned_data['author']
             )
-            book_detail.image.save('book_{}.jpg'.format(book_detail.id), File(blob), save=False)
+            book_detail.image.save('book_{}.jpg'.format(book_detail.id), File(blob), save=True)
         else:
             book_detail, _ = BookDetail.objects.get_or_create(
                 source=BookDetail.SOURCE.CUSTOM,
                 title=form.cleaned_data['title'],
-                author=form.cleaned_data['author']
+                author=form.cleaned_data['author'],
+                image=None
             )
         return book_detail
 
