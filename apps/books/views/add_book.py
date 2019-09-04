@@ -11,7 +11,7 @@ from PIL import Image
 
 from ..serializers import BookItemSerializer
 from ..forms import AddBookForm
-from ..tasks import download_exteranl_image
+from ..tasks import download_external_image
 
 from ..models import BookDetail, BookItem, BookItemAudit
 
@@ -60,7 +60,7 @@ class AddBookView(View):
                 image_external_url=google_data['image_url'],
             )
             book_detail.save()
-            download_exteranl_image.delay(book_detail.id)
+            download_external_image.delay(book_detail.id)
         return book_detail
 
     def _get_or_create_custom_book(self, form):

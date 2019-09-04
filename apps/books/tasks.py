@@ -11,7 +11,7 @@ from .models import BookDetail
 
 
 @shared_task
-def download_exteranl_image(book_detail_id):
+def download_external_image(book_detail_id):
     book = BookDetail.objects.get(pk=book_detail_id)
     image = urllib.request.urlretrieve(book.image_external_url)
     file = File(open(image[0], 'rb'))
