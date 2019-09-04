@@ -96,7 +96,7 @@ class AddBookView(View):
             return {
                 'title': data['title'],
                 'author': ", ".join(data['authors']) if 'authors' in data else None,
-                'image_url': data['imageLinks']['small']
+                'image_url': data['imageLinks']['thumbnail']
             }
         else:
             raise self.GoogleException
