@@ -11,12 +11,19 @@ class BookItemSerializer:
 
     @classmethod
     def _serialize_one(cls, book):
+        if book.detail.image.name:
+            image = book.detail.image.url
+        elif book.detail.image_external_url:
+            image = book.detail.image_external_url
+        else:
+            image = None
+
         return {
             "id": str(book.pk),
             "description":{
                 "title": book.detail.title,
                 "author": book.detail.author,
-                "image": book.detail.image.url if book.detail.image.name else None,
+                "image": image,
             },
             "comment": book.comment,
             "active": book.status == BookItem.STATUS.ACTIVE,
