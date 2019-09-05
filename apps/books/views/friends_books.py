@@ -26,12 +26,23 @@ def friends_decorator(function):
             vk_id__in=friends_ids,
             visibility_type=Account.VISIBILITY_TYPE.ALL_FRIENDS
         ).exclude(bookitem__isnull=True).values('id', 'vk_id')
+
         whitelist_friends = Account.objects.filter(
             vk_id__in=friends_ids,
             visibility_type=Account.VISIBILITY_TYPE.ONLY_SOME_FRIENDS,
             whitelistoffriendslists__friend_id=session['vk_id']
         ).exclude(bookitem__isnull=True).values('id', 'vk_id')
-        filtered_friends = list(all_friends) + list(whitelist_friends)
+
+        blacklist_friends = Account.objects.filter(
+            vk_id__in=friends_ids,
+            visibility_type=Account.VISIBILITY_TYPE.EXCEPT_SOME_FRIENDS
+        ).exclude(
+            blacklistoffriendslists__friend_id=session['vk_id']
+        ).exclude(
+            bookitem__isnull=True
+        ).values('id', 'vk_id')
+
+        filtered_friends = list(all_friends) + list(whitelist_friends) + list(blacklist_friends)
         filtered_friends = {f['vk_id']: f['id'] for f in filtered_friends}
         friends_list = []
         for friend in friends:

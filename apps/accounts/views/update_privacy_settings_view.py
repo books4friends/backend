@@ -6,7 +6,7 @@ from django.http.response import JsonResponse
 
 from apps.utils.auth import auth_decorator
 
-from ..models import Account, WhiteListOfFriendsLists
+from ..models import Account, WhiteListOfFriendsLists, BlackListOfFriendsLists
 from ..forms import PrivacySomeFriends
 
 
@@ -44,3 +44,26 @@ class SetPrivacySomeFriendsView(View):
                 'success': False
             })
 
+
+class SetPrivacyExceptSomeFriendsView(View):
+    @auth_decorator
+    def post(self, request, *args, **kwargs):
+        account = Account.objects.get(pk=request.session['account_id'])
+        data = json.loads(request.body.decode('utf-8'))
+        form = PrivacySomeFriends(data)
+        if form.is_valid():
+            friends = form.cleaned_data['selected_friends']
+            account.blacklistoffriendslists_set.all().delete()
+            BlackListOfFriendsLists.objects.bulk_create(
+                [BlackListOfFriendsLists(owner_id=account, friend_id=friend) for friend in friends]
+            )
+            account.visibility_type = Account.VISIBILITY_TYPE.EXCEPT_SOME_FRIENDS
+            account.save(update_fields=['visibility_type'])
+            return JsonResponse({
+                'success': True
+            })
+
+        else:
+            return JsonResponse({
+                'success': False
+            })

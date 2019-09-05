@@ -6,12 +6,12 @@ class Account(models.Model):
         ALL_FRIENDS = 0
         ONLY_OWNER = 1
         ONLY_SOME_FRIENDS = 2
-        ONLY_SOME_FRIENDS_LISTS = 3
+        EXCEPT_SOME_FRIENDS = 3
     VISIBILITY_TYPE_CHOICES = (
         (VISIBILITY_TYPE.ALL_FRIENDS, 'all friends'),
         (VISIBILITY_TYPE.ONLY_OWNER, 'only me'),
         (VISIBILITY_TYPE.ONLY_SOME_FRIENDS, 'only some friends'),
-        (VISIBILITY_TYPE.ONLY_SOME_FRIENDS_LISTS, 'only some friends lists'),
+        (VISIBILITY_TYPE.EXCEPT_SOME_FRIENDS, 'except friends lists'),
     )
 
     vk_id = models.CharField(max_length=255)
@@ -39,6 +39,6 @@ class WhiteListOfFriendsLists(models.Model):
     friend_id = models.CharField(max_length=255)
 
 
-class WhiteListOfLists(models.Model):
+class BlackListOfFriendsLists(models.Model):
     owner_id = models.ForeignKey(Account, on_delete=models.CASCADE)
-    friend_list_id = models.CharField(max_length=255)
+    friend_id = models.CharField(max_length=255)

@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from apps.utils.auth import auth_decorator
 from apps.vk_service.api import get_friends_list
 
-from ..models import WhiteListOfFriendsLists
+from ..models import WhiteListOfFriendsLists, BlackListOfFriendsLists
 
 
 class FriendsListView(View):
@@ -18,6 +18,13 @@ class FriendsListView(View):
             only('friend_id')
         whitelist_friends = set(friend.friend_id for friend in whitelist_friends)
         for friend in friends:
-            friend['selected'] = friend['external_id'] in whitelist_friends
+            friend['whitelist_selected'] = friend['external_id'] in whitelist_friends
+
+        blacklist_friends = BlackListOfFriendsLists.objects.\
+            filter(owner_id=request.session['account_id']).\
+            only('friend_id')
+        blacklist_friends = set(friend.friend_id for friend in blacklist_friends)
+        for friend in friends:
+            friend['blacklist_selected'] = friend['external_id'] in blacklist_friends
 
         return JsonResponse({'success': True, 'friends': friends})
