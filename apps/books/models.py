@@ -44,6 +44,9 @@ class BookItem(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     comment = models.TextField()
 
+    class Meta:
+        ordering = ('-created_at', )
+
 
 class BookItemAudit(models.Model):
     class ACTION_TYPE(object):
