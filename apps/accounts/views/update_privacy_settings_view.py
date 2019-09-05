@@ -67,3 +67,14 @@ class SetPrivacyExceptSomeFriendsView(View):
             return JsonResponse({
                 'success': False
             })
+
+
+class SetPrivacyOnlyOwnerView(View):
+    @auth_decorator
+    def post(self, request, *args, **kwargs):
+        account = Account.objects.get(pk=request.session['account_id'])
+        account.visibility_type = Account.VISIBILITY_TYPE.ONLY_OWNER
+        account.save(update_fields=['visibility_type'])
+        return JsonResponse({
+            'success': True
+        })
