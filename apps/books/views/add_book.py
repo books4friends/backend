@@ -24,6 +24,15 @@ class AddBookView(View):
     def post(self, request, *args, **kwargs):
         form = AddBookForm(request.POST, request.FILES)
         if form.is_valid():
+            if BookItem.objects.filter(
+                account_id=self.request.session['account_id'],
+                status__in=[BookItem.STATUS.ACTIVE, BookItem.STATUS.NOT_ACTIVE],
+                detail__title=form.cleaned_data['title'],
+                detail__author=form.cleaned_data['author']
+            ).exists():
+                return JsonResponse({'success': False, 'error_type': 'ALREADY_ADDED',
+                                     'title': form.cleaned_data['title'], 'author': form.cleaned_data['author']})
+
             if form.cleaned_data['external_id']:
                 try:
                     book_detail = self._get_or_create_google_book(form.cleaned_data['external_id'])
@@ -42,7 +51,7 @@ class AddBookView(View):
                                        BookItemAudit.ACTION_TYPE.ADD)
             return JsonResponse({'success': True, 'book': BookItemSerializer.serialize(book_item)})
         else:
-            return JsonResponse({'success': False, 'errors': form.errors})
+            return JsonResponse({'success': False, 'error_type': 'FORM_NOT_VALID', 'errors': form.errors})
 
     def _get_or_create_google_book(self, google_id):
         try:
