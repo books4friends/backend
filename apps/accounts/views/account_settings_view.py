@@ -12,6 +12,5 @@ class AccountSettingsView(View):
     def get(self, request, *args, **kwargs):
         account = Account.objects.get(pk=request.session['account_id'])
         return JsonResponse({
-            'success': True,
             'visibility_type': account.visibility_type
         })
