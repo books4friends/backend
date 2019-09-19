@@ -40,9 +40,9 @@ class BookItem(models.Model):
     detail = models.ForeignKey('BookDetail', on_delete=models.PROTECT)
     account = models.ForeignKey('accounts.Account', on_delete=models.PROTECT)
     status = models.SmallIntegerField(choices=STATUS_CHOICES, default=STATUS.ACTIVE)
+    comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    comment = models.TextField()
 
     class Meta:
         ordering = ('-created_at', )

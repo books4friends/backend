@@ -2,20 +2,20 @@ from django.db import models
 
 
 class Account(models.Model):
-    class VISIBILITY_TYPE:
+    class PRIVACY_TYPE:
         ALL_FRIENDS = 0
         ONLY_OWNER = 1
         ONLY_SOME_FRIENDS = 2
         EXCEPT_SOME_FRIENDS = 3
-    VISIBILITY_TYPE_CHOICES = (
-        (VISIBILITY_TYPE.ALL_FRIENDS, 'all friends'),
-        (VISIBILITY_TYPE.ONLY_OWNER, 'only me'),
-        (VISIBILITY_TYPE.ONLY_SOME_FRIENDS, 'only some friends'),
-        (VISIBILITY_TYPE.EXCEPT_SOME_FRIENDS, 'except friends lists'),
+    PRIVACY_TYPE_CHOICES = (
+        (PRIVACY_TYPE.ALL_FRIENDS, 'all friends'),
+        (PRIVACY_TYPE.ONLY_OWNER, 'only me'),
+        (PRIVACY_TYPE.ONLY_SOME_FRIENDS, 'only some friends'),
+        (PRIVACY_TYPE.EXCEPT_SOME_FRIENDS, 'except friends lists'),
     )
 
     vk_id = models.CharField(max_length=255)
-    visibility_type = models.SmallIntegerField(choices=VISIBILITY_TYPE_CHOICES, default=VISIBILITY_TYPE.ALL_FRIENDS)
+    privacy_type = models.SmallIntegerField(choices=PRIVACY_TYPE_CHOICES, default=PRIVACY_TYPE.ALL_FRIENDS)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -34,11 +34,11 @@ class VkSession(models.Model):
         return self.account
 
 
-class WhiteListOfFriendsLists(models.Model):
-    owner_id = models.ForeignKey(Account, on_delete=models.CASCADE)
-    friend_id = models.CharField(max_length=255)
+class FriendsWhiteList(models.Model):
+    owner = models.ForeignKey(Account, on_delete=models.CASCADE)
+    friend_ext_id = models.CharField(max_length=255)
 
 
-class BlackListOfFriendsLists(models.Model):
-    owner_id = models.ForeignKey(Account, on_delete=models.CASCADE)
-    friend_id = models.CharField(max_length=255)
+class FriendsBlackList(models.Model):
+    owner = models.ForeignKey(Account, on_delete=models.CASCADE)
+    friend_ext_id = models.CharField(max_length=255)

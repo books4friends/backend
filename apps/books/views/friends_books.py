@@ -24,20 +24,20 @@ def friends_decorator(function):
         friends_ids = [f['external_id'] for f in friends]
         all_friends = Account.objects.filter(
             vk_id__in=friends_ids,
-            visibility_type=Account.VISIBILITY_TYPE.ALL_FRIENDS
+            privacy_type=Account.PRIVACY_TYPE.ALL_FRIENDS
         ).exclude(bookitem__isnull=True).values('id', 'vk_id')
 
         whitelist_friends = Account.objects.filter(
             vk_id__in=friends_ids,
-            visibility_type=Account.VISIBILITY_TYPE.ONLY_SOME_FRIENDS,
-            whitelistoffriendslists__friend_id=session['vk_id']
+            privacy_type=Account.PRIVACY_TYPE.ONLY_SOME_FRIENDS,
+            friendswhitelist__friend_ext_id=session['vk_id']
         ).exclude(bookitem__isnull=True).values('id', 'vk_id')
 
         blacklist_friends = Account.objects.filter(
             vk_id__in=friends_ids,
-            visibility_type=Account.VISIBILITY_TYPE.EXCEPT_SOME_FRIENDS
+            privacy_type=Account.PRIVACY_TYPE.EXCEPT_SOME_FRIENDS
         ).exclude(
-            blacklistoffriendslists__friend_id=session['vk_id']
+            friendsblacklist__friend_ext_id=session['vk_id']
         ).exclude(
             bookitem__isnull=True
         ).values('id', 'vk_id')
@@ -134,8 +134,8 @@ class GetFriendsBooksListView(View):
         return [friend for friend in friends if friend['city'] and friend['city']['id'] == city_id]
 
     @classmethod
-    def filter_friends_by_friend(cls, friends, friend_id):
-        return [friend for friend in friends if friend['account_id'] == friend_id]
+    def filter_friends_by_friend(cls, friends, friend_ext_id):
+        return [friend for friend in friends if friend['account_id'] == friend_ext_id]
 
     @classmethod
     def _serialize_books(cls, books, friends):
