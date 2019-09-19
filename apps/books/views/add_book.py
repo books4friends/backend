@@ -19,7 +19,7 @@ from ..models import BookDetail, BookItem, BookItemAudit
 GOOGLE_VOLUME_API = "https://www.googleapis.com/books/v1/volumes/{}"
 
 
-class AddBookView(View):
+class AddMyBookView(View):
     @auth_decorator
     def post(self, request, *args, **kwargs):
         form = AddBookForm(request.POST, request.FILES)
