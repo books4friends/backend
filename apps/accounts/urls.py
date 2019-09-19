@@ -1,13 +1,12 @@
 from django.conf.urls import url
 
-from .views.friends_list_view import FriendsListView
 from .views.account_settings_view import AccountSettingsView
-from .views.update_privacy_settings_view import SetPrivacyAllFriendsView, SetPrivacySomeFriendsView, \
-    SetPrivacyExceptSomeFriendsView, SetPrivacyOnlyOwnerView
+from .views.update_privacy_settings_view import PrivacyFriendsListView, SetPrivacyAllFriendsView, \
+    SetPrivacySomeFriendsView, SetPrivacyExceptSomeFriendsView, SetPrivacyOnlyOwnerView
 
 
 urlpatterns = [
-    url(r'^friends-list/$', FriendsListView.as_view(), name='friends-list'),
+    url(r'^friends-list/$', PrivacyFriendsListView.as_view(), name='friends-list'),
     url(r'^privacy/set-all-friends/$', SetPrivacyAllFriendsView.as_view(), name='set-privacy-all-friends/'),
     url(r'^privacy/set-some-friends/$', SetPrivacySomeFriendsView.as_view(), name='set-privacy-some-friends/'),
     url(r'^privacy/set-except-some-friends/$', SetPrivacyExceptSomeFriendsView.as_view(),
