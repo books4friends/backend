@@ -55,6 +55,7 @@ class LogoutView(View):
 class AppView(View):
     def get(self, request, *args, **kwargs):
         if request.session.get('vk_id') and request.session.get('access_token'):
-            return render(request, template_name='frontend/app.html')
+            account = Account.objects.get(pk=request.session['account_id'])
+            return render(request, template_name='frontend/app.html', context={'locale': account.locale})
         else:
             return redirect('login-form')
