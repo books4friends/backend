@@ -6,6 +6,20 @@ from .utils import AuthMixin
 VK_ID = 'testId'
 
 
+class RootViewTest(TestCase, AuthMixin):
+    def setUp(self):
+        account = Account.objects.create(vk_id=VK_ID)
+
+    def test_url_exists_at_desired_location(self):
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_redirect_authenticated(self):
+        self.auth_user(account=Account.objects.get(vk_id=VK_ID))
+        response = self.client.get('/')
+        self.assertRedirects(response, '/app/')
+
+
 class AppViewTest(TestCase, AuthMixin):
     def setUp(self):
         account = Account.objects.create(vk_id=VK_ID)
