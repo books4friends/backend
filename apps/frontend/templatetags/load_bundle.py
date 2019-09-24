@@ -14,7 +14,6 @@ FILE_NAME = '../webpack-stats.json'
 
 def _get_bundle_file():
     file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), FILE_NAME)
-    print(file_path)
     with open(file_path, encoding="utf-8") as f:
         return json.load(f)
 
