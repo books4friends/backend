@@ -34,9 +34,27 @@ class AppViewTest(TestCase, AuthMixin):
         response = self.client.get('/app/')
         self.assertEqual(response.status_code, 200)
 
+    def test_secondary_urls_exist_at_desired_location(self):
+        self.auth_user(account=Account.objects.get(vk_id=VK_ID))
+        response = self.client.get('/app/my-books/')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/app/settings/')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/app/about/')
+        self.assertEqual(response.status_code, 200)
+
     def test_react_loaded(self):
         self.auth_user(account=Account.objects.get(vk_id=VK_ID))
         response = self.client.get('/app/')
+        self.assertContains(response, '<script type="text/javascript" src="/static/frontend/app/app.js"></script>')
+
+    def test_secondary_urls_react_loaded(self):
+        self.auth_user(account=Account.objects.get(vk_id=VK_ID))
+        response = self.client.get('/app/my-books/')
+        self.assertContains(response, '<script type="text/javascript" src="/static/frontend/app/app.js"></script>')
+        response = self.client.get('/app/settings/')
+        self.assertContains(response, '<script type="text/javascript" src="/static/frontend/app/app.js"></script>')
+        response = self.client.get('/app/about/')
         self.assertContains(response, '<script type="text/javascript" src="/static/frontend/app/app.js"></script>')
 
     def test_redirect_not_authenticated(self):
