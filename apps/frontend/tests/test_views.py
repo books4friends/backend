@@ -139,3 +139,36 @@ class VkRedirectViewTest(TestCase, AuthMixin):
         self.auth_user(account=Account.objects.get(vk_id=VK_ID))
         response = self.client.get('/vk_redirect_uri/')
         self.assertRedirects(response, '/app/')
+
+
+class LogoutViewTest(TestCase, AuthMixin):
+
+    def setUp(self):
+        account = Account.objects.create(vk_id=VK_ID)
+
+    def test_url_exists_at_desired_location(self):
+        self.auth_user(account=Account.objects.get(vk_id=VK_ID))
+        response = self.client.post('/logout/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_url_not_get_request(self):
+        self.auth_user(account=Account.objects.get(vk_id=VK_ID))
+        response = self.client.get('/logout/')
+        self.assertEqual(response.status_code, 405)
+
+    def test_session_authenticated(self):
+        self.auth_user(account=Account.objects.get(vk_id=VK_ID))
+        self.client.post('/logout/')
+        session = self.client.session
+        self.assertFalse('vk_session_id' in session)
+        self.assertFalse('access_token' in session)
+        self.assertFalse('account_id' in session)
+        self.assertFalse('vk_id' in session)
+
+    def test_session_not_authenticated(self):
+        self.client.post('/logout/')
+        session = self.client.session
+        self.assertFalse('vk_session_id' in session)
+        self.assertFalse('access_token' in session)
+        self.assertFalse('account_id' in session)
+        self.assertFalse('vk_id' in session)
