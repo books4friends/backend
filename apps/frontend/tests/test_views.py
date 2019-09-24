@@ -1,9 +1,14 @@
 from django.test import TestCase
 
-from apps.accounts.models import Account
-from .utils import AuthMixin
+from unittest.mock import patch
+from unittest import mock
+import datetime
 
-VK_ID = 'testId'
+from apps.accounts.models import Account
+from .utils import AuthMixin, get_expires_at, EXPIRES_IN
+
+VK_ID = 'VK_ID'
+ACCESS_TOKEN = 'ACCESS_TOKEN'
 
 
 class RootViewTest(TestCase, AuthMixin):
@@ -53,3 +58,66 @@ class AppViewTest(TestCase, AuthMixin):
         response = self.client.get('/app/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '"locale": "undefined"')
+
+
+class VkRedirectViewTest(TestCase, AuthMixin):
+    login_data = {
+            'access_token': ACCESS_TOKEN,
+            'expires_in': EXPIRES_IN,
+            'user_id': VK_ID
+        }
+
+    def setUp(self):
+        account = Account.objects.create(vk_id=VK_ID)
+
+    def test_url_exists_at_desired_location(self):
+        response = self.client.get('/vk_redirect_uri/')
+        self.assertEqual(response.status_code, 200)
+
+    @mock.patch('apps.frontend.views.check_token', side_effect=None, return_value=True)
+    def test_redirect_with_correct_data(self, mock_auth):
+        response = self.client.post('/vk_redirect_uri/', data=self.login_data)
+        self.assertRedirects(response, '/app/')
+
+    @mock.patch('apps.frontend.views.check_token', side_effect=None, return_value=False)
+    def test_error_with_false_data(self, mock_auth):
+        response = self.client.post('/vk_redirect_uri/', data=self.login_data)
+        self.assertEqual(response.status_code, 401)
+
+    @mock.patch('apps.frontend.views.check_token', side_effect=None, return_value=True)
+    def test_session_with_correct_data(self, mock_auth):
+        self.client.post('/vk_redirect_uri/', data=self.login_data)
+        session = self.client.session
+        account = Account.objects.get(vk_id=VK_ID)
+        vk_session = account.vksession_set.all().order_by('-id')[0]
+        self.assertEqual(session['vk_session_id'], vk_session.id)
+        self.assertEqual(session['access_token'], ACCESS_TOKEN)
+        self.assertEqual(session['account_id'], account.id)
+        self.assertEqual(session['vk_id'], VK_ID)
+
+    @mock.patch('apps.frontend.views.check_token', side_effect=None, return_value=False)
+    def test_session_with_false_data(self, mock_auth):
+        self.client.post('/vk_redirect_uri/', data=self.login_data)
+        session = self.client.session
+        self.assertFalse('vk_session_id' in session)
+        self.assertFalse('access_token' in session)
+        self.assertFalse('account_id' in session)
+        self.assertFalse('vk_id' in session)
+
+    @mock.patch('apps.frontend.views.check_token', side_effect=None, return_value=True)
+    def test_vk_session_with_correct_data(self, mock_auth):
+        self.client.post('/vk_redirect_uri/', data=self.login_data)
+        account = Account.objects.get(vk_id=VK_ID)
+        vk_session = account.vksession_set.all().order_by('-id')[0]
+        self.assertEqual(vk_session.access_token, ACCESS_TOKEN)
+        self.assertAlmostEqual(vk_session.expires_at, get_expires_at(), delta=datetime.timedelta(seconds=1))
+
+    def test_post_redirect_authenticated(self):
+        self.auth_user(account=Account.objects.get(vk_id=VK_ID))
+        response = self.client.post('/vk_redirect_uri/', data=self.login_data)
+        self.assertRedirects(response, '/app/')
+
+    def test_get_redirect_authenticated(self):
+        self.auth_user(account=Account.objects.get(vk_id=VK_ID))
+        response = self.client.get('/vk_redirect_uri/')
+        self.assertRedirects(response, '/app/')

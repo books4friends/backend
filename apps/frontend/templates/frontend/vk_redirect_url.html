@@ -34,7 +34,10 @@
             params[temp[0]] = temp[1]
         });
 
-        redirectPost('http://127.0.0.1:8000/vk_redirect_uri/', params);
+        if (hash.length === 0)
+            window.location.href = "http://127.0.0.1:8000";
+        else
+            redirectPost('http://127.0.0.1:8000/vk_redirect_uri/', params);
     </script>
 </body>
 </html>

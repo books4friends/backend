@@ -6,10 +6,13 @@ from apps.accounts.models import VkSession
 EXPIRES_IN = 1 * 24 * 60 * 60
 
 
+def get_expires_at():
+    return make_aware(datetime.datetime.now() + datetime.timedelta(seconds=int(EXPIRES_IN)))
+
+
 class AuthMixin(object):
     def auth_user(self, account):
-        expires_at = make_aware(datetime.datetime.now() + datetime.timedelta(seconds=int(EXPIRES_IN)))
-        vk_session = VkSession.objects.create(account=account, access_token='test_token', expires_at=expires_at)
+        vk_session = VkSession.objects.create(account=account, access_token='test_token', expires_at=get_expires_at())
 
         session = self.client.session
         session['vk_session_id'] = vk_session.id
