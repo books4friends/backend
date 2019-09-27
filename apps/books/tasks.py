@@ -1,4 +1,3 @@
-
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 
@@ -15,6 +14,6 @@ def download_external_image(book_detail_id):
     book = BookDetail.objects.get(pk=book_detail_id)
     image = urllib.request.urlretrieve(book.image_external_url)
     file = File(open(image[0], 'rb'))
-    file_name = "{}_small.{}".format(book.external_id, imghdr.what(file))
+    file_name = "book_{}.{}".format(book.id, imghdr.what(file))
     book.image.save(file_name, file)
     book.save()
