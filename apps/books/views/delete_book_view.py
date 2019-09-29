@@ -14,7 +14,8 @@ class DeleteBookView(View):
         book_item = get_object_or_404(
             BookItem,
             pk=book_id,
-            account_id=self.request.session['account_id']
+            account_id=self.request.session['account_id'],
+            status__in=[BookItem.STATUS.NOT_ACTIVE, BookItem.STATUS.ACTIVE]
         )
 
         book_item.status = BookItem.STATUS.DELETED

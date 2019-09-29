@@ -17,7 +17,8 @@ class EditBookItemCommentView(View):
         book_item = get_object_or_404(
             BookItem,
             pk=book_id,
-            account_id=self.request.session['account_id']
+            account_id=self.request.session['account_id'],
+            status__in=[BookItem.STATUS.NOT_ACTIVE, BookItem.STATUS.ACTIVE]
         )
 
         data = json.loads(request.body.decode('utf-8'))
@@ -36,7 +37,8 @@ class ActivateBookItemView(View):
         book_item = get_object_or_404(
             BookItem,
             pk=book_id,
-            account_id=self.request.session['account_id']
+            account_id=self.request.session['account_id'],
+            status=BookItem.STATUS.NOT_ACTIVE
         )
         book_item.status = BookItem.STATUS.ACTIVE
         book_item.save(update_fields=['status'])
@@ -49,7 +51,8 @@ class DeactivateBookItemView(View):
         book_item = get_object_or_404(
             BookItem,
             pk=book_id,
-            account_id=self.request.session['account_id']
+            account_id=self.request.session['account_id'],
+            status=BookItem.STATUS.ACTIVE
         )
         book_item.status = BookItem.STATUS.NOT_ACTIVE
         book_item.save(update_fields=['status'])
