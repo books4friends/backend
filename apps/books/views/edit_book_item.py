@@ -57,3 +57,19 @@ class DeactivateBookItemView(View):
         book_item.status = BookItem.STATUS.NOT_ACTIVE
         book_item.save(update_fields=['status'])
         return JsonResponse({'success': True, 'book_id': book_item.id})
+
+
+class DeleteBookView(View):
+    @auth_decorator
+    def post(self, request, book_id, *args, **kwargs):
+        book_item = get_object_or_404(
+            BookItem,
+            pk=book_id,
+            account_id=self.request.session['account_id'],
+            status__in=[BookItem.STATUS.NOT_ACTIVE, BookItem.STATUS.ACTIVE]
+        )
+
+        book_item.status = BookItem.STATUS.DELETED
+        book_item.save(update_fields=['status'])
+
+        return JsonResponse({'success': True, 'book_id': book_item.id})

@@ -2,8 +2,8 @@ from django.conf.urls import url
 
 from apps.books.views.add_book import AddMyBookView
 from apps.books.views.my_books_list import MyBooksList
-from apps.books.views.delete_book_view import DeleteBookView
-from apps.books.views.edit_book_item import EditBookItemCommentView, ActivateBookItemView, DeactivateBookItemView
+from apps.books.views.edit_book_item import EditBookItemCommentView, ActivateBookItemView, DeactivateBookItemView, \
+    DeleteBookView
 
 urlpatterns = [
     url(r'^$', MyBooksList.as_view(), name='my-books'),
