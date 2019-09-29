@@ -19,13 +19,20 @@ class AccountSettingsViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         response = self.client.get('/app/api/settings/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.account.privacy_type, Account.PRIVACY_TYPE.ALL_FRIENDS)
+        self.assertJSONEqual(
+            response.content.decode("utf-8"),
+            {'privacy_type': Account.PRIVACY_TYPE.ALL_FRIENDS}
+        )
 
     def test_only_owner_privacy(self):
         self.auth_user(self.account)
         self.account.privacy_type = Account.PRIVACY_TYPE.ONLY_OWNER
+        self.account.save()
         response = self.client.get('/app/api/settings/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.account.privacy_type, Account.PRIVACY_TYPE.ONLY_OWNER)
+        self.assertJSONEqual(
+            response.content.decode("utf-8"),
+            {'privacy_type': Account.PRIVACY_TYPE.ONLY_OWNER}
+        )
 
 
