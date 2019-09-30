@@ -310,3 +310,179 @@ class SetPrivacyOnlyOwnerViewTest(TestCase, AuthMixin):
         self.assertJSONEqual(response.content.decode("utf-8"), {"success": True})
         else_account = Account.objects.get(vk_id=ELSE_VK_ID)
         self.assertEqual(else_account.privacy_type, Account.PRIVACY_TYPE.ALL_FRIENDS)
+
+
+class SetPrivacySomeFriendsViewTest(TestCase, AuthMixin):
+    def setUp(self):
+        self.account = Account.objects.create(vk_id=VK_ID)
+
+    def test_correct(self):
+        self.auth_user(self.account)
+        self.account.privacy_type = Account.PRIVACY_TYPE.ALL_FRIENDS
+        self.account.save()
+        response = self.client.post(
+            '/app/api/settings/privacy/set-some-friends/',
+            json.dumps({'selected_friends': [VK_FRIEND_2['external_id'], VK_FRIEND_3['external_id']]}),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+        account = Account.objects.get(vk_id=VK_ID)
+        self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.ONLY_SOME_FRIENDS)
+        self.assertEqual(account.friendswhitelist_set.all().count(), 2)
+        self.assertTrue(account.friendswhitelist_set.filter(friend_ext_id=VK_FRIEND_2['external_id']).exists())
+        self.assertTrue(account.friendswhitelist_set.filter(friend_ext_id=VK_FRIEND_3['external_id']).exists())
+        self.assertJSONEqual(response.content.decode("utf-8"), {"success": True})
+
+    def test_change_list(self):
+        self.auth_user(self.account)
+        self.account.privacy_type = Account.PRIVACY_TYPE.ONLY_SOME_FRIENDS
+        FriendsWhiteList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND['external_id'])
+        FriendsWhiteList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_2['external_id'])
+        FriendsWhiteList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
+        self.account.save()
+        response = self.client.post(
+            '/app/api/settings/privacy/set-some-friends/',
+            json.dumps({'selected_friends': [VK_FRIEND_3['external_id'], VK_FRIEND_4['external_id']]}),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+        account = Account.objects.get(vk_id=VK_ID)
+        self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.ONLY_SOME_FRIENDS)
+        self.assertEqual(account.friendswhitelist_set.all().count(), 2)
+        self.assertTrue(account.friendswhitelist_set.filter(friend_ext_id=VK_FRIEND_3['external_id']).exists())
+        self.assertTrue(account.friendswhitelist_set.filter(friend_ext_id=VK_FRIEND_4['external_id']).exists())
+        self.assertJSONEqual(response.content.decode("utf-8"), {"success": True})
+
+    def test_blacklists_not_changed(self):
+        self.auth_user(self.account)
+        self.account.privacy_type = Account.PRIVACY_TYPE.EXCEPT_SOME_FRIENDS
+        self.account.save()
+        FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_2['external_id'])
+        FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
+
+        response = self.client.post(
+            '/app/api/settings/privacy/set-some-friends/',
+            json.dumps({'selected_friends': [VK_FRIEND_3['external_id'], VK_FRIEND_4['external_id']]}),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode("utf-8"), {"success": True})
+        account = Account.objects.get(vk_id=VK_ID)
+
+        self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.ONLY_SOME_FRIENDS)
+        self.assertEqual(account.friendswhitelist_set.all().count(), 2)
+        self.assertTrue(account.friendswhitelist_set.filter(friend_ext_id=VK_FRIEND_3['external_id']).exists())
+        self.assertTrue(account.friendswhitelist_set.filter(friend_ext_id=VK_FRIEND_4['external_id']).exists())
+
+        self.assertEqual(account.friendsblacklist_set.all().count(), 2)
+        self.assertTrue(account.friendsblacklist_set.filter(friend_ext_id=VK_FRIEND_2['external_id']).exists())
+        self.assertTrue(account.friendsblacklist_set.filter(friend_ext_id=VK_FRIEND_3['external_id']).exists())
+
+    def test_else_account(self):
+        self.auth_user(self.account)
+        self.account.privacy_type = Account.PRIVACY_TYPE.ONLY_OWNER
+        self.account.save()
+        else_account = Account.objects.create(vk_id=ELSE_VK_ID)
+        else_account.privacy_type = Account.PRIVACY_TYPE.ONLY_OWNER
+        else_account.save()
+
+        response = self.client.post(
+            '/app/api/settings/privacy/set-some-friends/',
+            json.dumps({'selected_friends': [VK_FRIEND_2['external_id'], VK_FRIEND_3['external_id']]}),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+        account = Account.objects.get(vk_id=VK_ID)
+        self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.ONLY_SOME_FRIENDS)
+        self.assertJSONEqual(response.content.decode("utf-8"), {"success": True})
+        else_account = Account.objects.get(vk_id=ELSE_VK_ID)
+        self.assertEqual(else_account.privacy_type, Account.PRIVACY_TYPE.ONLY_OWNER)
+
+
+class SetPrivacyExceptSomeFriendsViewTest(TestCase, AuthMixin):
+    def setUp(self):
+        self.account = Account.objects.create(vk_id=VK_ID)
+
+    def test_correct(self):
+        self.auth_user(self.account)
+        self.account.privacy_type = Account.PRIVACY_TYPE.ALL_FRIENDS
+        self.account.save()
+        response = self.client.post(
+            '/app/api/settings/privacy/set-except-some-friends/',
+            json.dumps({'selected_friends': [VK_FRIEND_2['external_id'], VK_FRIEND_3['external_id']]}),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+        account = Account.objects.get(vk_id=VK_ID)
+        self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.EXCEPT_SOME_FRIENDS)
+        self.assertEqual(account.friendsblacklist_set.all().count(), 2)
+        self.assertTrue(account.friendsblacklist_set.filter(friend_ext_id=VK_FRIEND_2['external_id']).exists())
+        self.assertTrue(account.friendsblacklist_set.filter(friend_ext_id=VK_FRIEND_3['external_id']).exists())
+        self.assertJSONEqual(response.content.decode("utf-8"), {"success": True})
+
+    def test_change_list(self):
+        self.auth_user(self.account)
+        self.account.privacy_type = Account.PRIVACY_TYPE.ONLY_SOME_FRIENDS
+        FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND['external_id'])
+        FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_2['external_id'])
+        FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
+        self.account.save()
+        response = self.client.post(
+            '/app/api/settings/privacy/set-except-some-friends/',
+            json.dumps({'selected_friends': [VK_FRIEND_3['external_id'], VK_FRIEND_4['external_id']]}),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+        account = Account.objects.get(vk_id=VK_ID)
+        self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.EXCEPT_SOME_FRIENDS)
+        self.assertEqual(account.friendsblacklist_set.all().count(), 2)
+        self.assertTrue(account.friendsblacklist_set.filter(friend_ext_id=VK_FRIEND_3['external_id']).exists())
+        self.assertTrue(account.friendsblacklist_set.filter(friend_ext_id=VK_FRIEND_4['external_id']).exists())
+        self.assertJSONEqual(response.content.decode("utf-8"), {"success": True})
+
+    def test_whitelists_not_changed(self):
+        self.auth_user(self.account)
+        self.account.privacy_type = Account.PRIVACY_TYPE.ONLY_SOME_FRIENDS
+        self.account.save()
+        FriendsWhiteList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_2['external_id'])
+        FriendsWhiteList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
+
+        response = self.client.post(
+            '/app/api/settings/privacy/set-except-some-friends/',
+            json.dumps({'selected_friends': [VK_FRIEND_3['external_id'], VK_FRIEND_4['external_id']]}),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content.decode("utf-8"), {"success": True})
+        account = Account.objects.get(vk_id=VK_ID)
+
+        self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.EXCEPT_SOME_FRIENDS)
+        self.assertEqual(account.friendsblacklist_set.all().count(), 2)
+        self.assertTrue(account.friendsblacklist_set.filter(friend_ext_id=VK_FRIEND_3['external_id']).exists())
+        self.assertTrue(account.friendsblacklist_set.filter(friend_ext_id=VK_FRIEND_4['external_id']).exists())
+
+        self.assertEqual(account.friendswhitelist_set.all().count(), 2)
+        self.assertTrue(account.friendswhitelist_set.filter(friend_ext_id=VK_FRIEND_2['external_id']).exists())
+        self.assertTrue(account.friendswhitelist_set.filter(friend_ext_id=VK_FRIEND_3['external_id']).exists())
+
+    def test_else_account(self):
+        self.auth_user(self.account)
+        self.account.privacy_type = Account.PRIVACY_TYPE.ONLY_OWNER
+        self.account.save()
+        else_account = Account.objects.create(vk_id=ELSE_VK_ID)
+        else_account.privacy_type = Account.PRIVACY_TYPE.ONLY_OWNER
+        else_account.save()
+
+        response = self.client.post(
+            '/app/api/settings/privacy/set-except-some-friends/',
+            json.dumps({'selected_friends': [VK_FRIEND_2['external_id'], VK_FRIEND_3['external_id']]}),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 200)
+        account = Account.objects.get(vk_id=VK_ID)
+        self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.EXCEPT_SOME_FRIENDS)
+        self.assertJSONEqual(response.content.decode("utf-8"), {"success": True})
+        else_account = Account.objects.get(vk_id=ELSE_VK_ID)
+        self.assertEqual(else_account.privacy_type, Account.PRIVACY_TYPE.ONLY_OWNER)
+
+
