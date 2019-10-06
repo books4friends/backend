@@ -3,9 +3,12 @@ gunicorn==19.9.0
 psycopg2-binary==2.7.5
 pytz==2018.5
 vk==2.0.2
-ipython=7.2.0
-Pillow=5.4.1
+ipython==7.2.0
+Pillow==5.4.1
 requests==2.20.1
-django-redis=4.10.0
-celery=4.2.1
+django-redis==4.10.0
+celery==4.3.0
 sorl-thumbnail==12.5.0
+django-extensions==2.1.4
+django-constance==2.4.0
+

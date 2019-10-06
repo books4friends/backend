@@ -9,7 +9,7 @@ from django.contrib.staticfiles.templatetags.staticfiles import static
 register = template.Library()
 
 
-FILE_NAME = '../webpack-stats.json'
+FILE_NAME = '../webpack-stats/webpack-stats.json'
 
 
 def _get_bundle_file():

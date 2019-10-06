@@ -29,8 +29,7 @@ SECRET_KEY = '9v1*!xvii2%16j58k71)k3j^_2&y)2d5f6w4ohb)c$=(tp@qt1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['backend']
 
 # Application definition
 
@@ -79,7 +78,7 @@ TEMPLATES = [
     },
 ]
 
-STATICFILES_DIRS = ['apps/']
+STATICFILES_DIRS = ['apps/frontend/static/']
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
@@ -137,8 +136,4 @@ MEDIA_URL = '/media/'
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
-BROKER_URL = 'redis://localhost:6379/0'
-RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
