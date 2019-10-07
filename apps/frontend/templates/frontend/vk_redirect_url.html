@@ -35,9 +35,9 @@
         });
 
         if (hash.length === 0)
-            window.location.href = "http://127.0.0.1";
+            window.location.href = "http://{{root_url}}/";
         else
-            redirectPost('http://127.0.0.1/vk_redirect_uri/', params);
+            redirectPost('http://{{root_url}}/vk_redirect_uri/', params);
     </script>
 </body>
 </html>

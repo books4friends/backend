@@ -1,6 +1,6 @@
 from project.settings.base import *
 
-print('settings', 2)
+ALLOWED_HOSTS = ['backend']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',

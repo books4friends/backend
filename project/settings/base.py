@@ -29,7 +29,6 @@ SECRET_KEY = '9v1*!xvii2%16j58k71)k3j^_2&y)2d5f6w4ohb)c$=(tp@qt1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['backend']
 
 # Application definition
 
@@ -135,5 +134,3 @@ MEDIA_URL = '/media/'
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
-
-

@@ -1,4 +1,5 @@
 import datetime
+import os
 
 from django.shortcuts import render, redirect
 from django.views import View
@@ -15,7 +16,8 @@ class VkRedirectUrl(View):
     def get(self, request):
         if request.session.get('vk_id') and request.session.get('access_token'):
             return redirect('app')
-        return render(request, template_name='frontend/vk_redirect_url.html')
+        return render(request, template_name='frontend/vk_redirect_url.html',
+                      context={'root_url': os.getenv('ROOT_URL')})
 
     def post(self, request, *args, **kwargs):
         if request.session.get('vk_id') and request.session.get('access_token'):
@@ -45,7 +47,8 @@ class RootView(View):
         if request.session.get('vk_id') and request.session.get('access_token'):
             return redirect('app')
         else:
-            return render(request, template_name='frontend/login_form.html')
+            return render(request, template_name='frontend/login_form.html',
+                          context={'root_url': os.getenv('ROOT_URL'), 'vk_app_id': os.getenv('VK_APP_ID')})
 
 
 class LogoutView(View):
