@@ -26,9 +26,6 @@ sys.path.insert(0, os.path.join(BASE_DIR, '../apps'))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '9v1*!xvii2%16j58k71)k3j^_2&y)2d5f6w4ohb)c$=(tp@qt1'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 
 # Application definition
 

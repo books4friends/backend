@@ -1,5 +1,7 @@
 from project.settings.base import *
 
+DEBUG = False
+
 ALLOWED_HOSTS = ['backend']
 DATABASES = {
     'default': {
