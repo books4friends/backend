@@ -25,10 +25,10 @@ def load_bundle():
     for chunk in bundle['chunks']['app']:
         if chunk['name'].endswith('.js'):
             tags.append(
-                '<script type="text/javascript" src="{}"></script>'.format(static('frontend/app/' + chunk['name']))
+                '<script type="text/javascript" src="{}"></script>'.format(static('vue/app/' + chunk['name']))
             )
         elif chunk['name'].endswith('.css'):
             tags.append(
-                '<link type="text/css" href="{}" rel="stylesheet"/>'.format(static('frontend/app/' + chunk['name']))
+                '<link type="text/css" href="{}" rel="stylesheet"/>'.format(static('vue/app/' + chunk['name']))
             )
     return mark_safe("\n".join(tags))

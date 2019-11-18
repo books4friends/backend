@@ -6,5 +6,5 @@ project/settings/local.py
 staticfiles/*
 media/*
 
-apps/frontend/webpack-stats.json
+apps/frontend/webpack-stats/
 apps/frontend/static/frontend/app/
