@@ -44,7 +44,7 @@ class AddBookViewTest(TestCase, AuthMixin):
         self.assertEqual(book_item.detail.title, TITLE)
         self.assertEqual(book_item.detail.author, AUTHOR)
         self.assertEqual(book_item.detail.source, BookDetail.SOURCE.CUSTOM)
-        self.assertIn('book_' + str(book_item.detail.id), book_item.detail.image.name)
+        self.assertIn('book_' + str(book_item.detail.id), book_item.image.name)
         self.assertEqual(book_item.comment, COMMENT)
         self.assertEqual(book_item.status, BookItem.STATUS.ACTIVE)
 
@@ -55,7 +55,7 @@ class AddBookViewTest(TestCase, AuthMixin):
                 "success": True,
                 "book": {
                     "id": str(book_item.id),
-                    "description": {"title": TITLE, "author": AUTHOR, "image": book_item.detail.image.url},
+                    "description": {"title": TITLE, "author": AUTHOR, "image": book_item.image.url},
                     "comment": COMMENT,
                     "active": True
                 }
@@ -80,7 +80,7 @@ class AddBookViewTest(TestCase, AuthMixin):
         self.assertEqual(book_item.detail.title, TITLE)
         self.assertEqual(book_item.detail.author, AUTHOR)
         self.assertEqual(book_item.detail.source, BookDetail.SOURCE.CUSTOM)
-        self.assertIn('book_' + str(book_item.detail.id), book_item.detail.image.name)
+        self.assertIn('book_' + str(book_item.id), book_item.image.name)
         self.assertEqual(book_item.comment, '')
         self.assertEqual(book_item.status, BookItem.STATUS.ACTIVE)
 
@@ -91,7 +91,7 @@ class AddBookViewTest(TestCase, AuthMixin):
                 "success": True,
                 "book": {
                     "id": str(book_item.id),
-                    "description": {"title": TITLE, "author": AUTHOR, "image": book_item.detail.image.url},
+                    "description": {"title": TITLE, "author": AUTHOR, "image": book_item.image.url},
                     "comment": "",
                     "active": True
                 }
@@ -116,7 +116,7 @@ class AddBookViewTest(TestCase, AuthMixin):
         self.assertEqual(book_item.detail.title, TITLE)
         self.assertEqual(book_item.detail.author, '')
         self.assertEqual(book_item.detail.source, BookDetail.SOURCE.CUSTOM)
-        self.assertIn('book_' + str(book_item.detail.id), book_item.detail.image.name)
+        self.assertIn('book_' + str(book_item.detail.id), book_item.image.name)
         self.assertEqual(book_item.comment, COMMENT)
         self.assertEqual(book_item.status, BookItem.STATUS.ACTIVE)
 
@@ -127,7 +127,7 @@ class AddBookViewTest(TestCase, AuthMixin):
                 "success": True,
                 "book": {
                     "id": str(book_item.id),
-                    "description": {"title": TITLE, "author": "", "image": book_item.detail.image.url},
+                    "description": {"title": TITLE, "author": "", "image": book_item.image.url},
                     "comment": COMMENT,
                     "active": True
                 }
@@ -166,7 +166,7 @@ class AddBookViewTest(TestCase, AuthMixin):
         self.assertEqual(book_item.detail.title, GOOGLE_TITLE)
         self.assertEqual(book_item.detail.author, GOOGLE_AUTHOR)
         self.assertEqual(book_item.detail.source, BookDetail.SOURCE.GOOGLE)
-        self.assertIn(GOOGLE_IMAGE_URL, book_item.detail.image_external_url)
+        self.assertIn(GOOGLE_IMAGE_URL, book_item.image_external_url)
         self.assertEqual(book_item.comment, COMMENT)
         self.assertEqual(book_item.status, BookItem.STATUS.ACTIVE)
 
@@ -180,7 +180,8 @@ class AddBookViewTest(TestCase, AuthMixin):
                     "description": {
                         "title": GOOGLE_TITLE,
                         "author": GOOGLE_AUTHOR,
-                        "image": book_item.detail.image_external_url},
+                        "image": book_item.image_external_url
+                    },
                     "comment": COMMENT,
                     "active": True
                 }

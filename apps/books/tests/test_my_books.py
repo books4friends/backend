@@ -36,8 +36,9 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         custom_image = SimpleUploadedFile(
             name='test_image.jpg', content=open(IMAGE_PATH, 'rb').read(), content_type='image/jpeg')
         book_item = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR, image=custom_image),
-            account=self.account
+            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR),
+            account=self.account,
+            image=custom_image
         )
 
         self.auth_user(self.account)
@@ -48,7 +49,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             {
                 "books": [{
                     "id": str(book_item.id),
-                    "description": {"title": TITLE, "author": AUTHOR, "image": book_item.detail.image.url},
+                    "description": {"title": TITLE, "author": AUTHOR, "image": book_item.image.url},
                     "comment": '',
                     "active": True
                 }]
@@ -57,11 +58,14 @@ class MyBooksListViewTest(TestCase, AuthMixin):
 
     def test_google_book(self):
         custom_image = SimpleUploadedFile(
-            name='test_image.jpg', content=open(IMAGE_PATH, 'rb').read(), content_type='image/jpeg')
+            name='test_image.jpg', content=open(IMAGE_PATH, 'rb').read(), content_type='image/jpeg'
+        )
         book_item = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR, image=custom_image,
-                                             source=BookDetail.SOURCE.GOOGLE, image_external_url=GOOGLE_IMAGE_URL),
-            account=self.account
+            account=self.account,
+            image=custom_image,
+            image_external_url=GOOGLE_IMAGE_URL,
+            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR,
+                                             source=BookDetail.SOURCE.GOOGLE),
         )
 
         self.auth_user(self.account)
@@ -72,7 +76,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             {
                 "books": [{
                     "id": str(book_item.id),
-                    "description": {"title": TITLE, "author": AUTHOR, "image": book_item.detail.image.url},
+                    "description": {"title": TITLE, "author": AUTHOR, "image": book_item.image.url},
                     "comment": '',
                     "active": True
                 }]
@@ -81,9 +85,9 @@ class MyBooksListViewTest(TestCase, AuthMixin):
 
     def test_google_book_with_not_downloaded_image(self):
         book_item = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR, source=BookDetail.SOURCE.GOOGLE,
-                                             image_external_url=GOOGLE_IMAGE_URL),
-            account=self.account
+            account=self.account,
+            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR, source=BookDetail.SOURCE.GOOGLE),
+            image_external_url=GOOGLE_IMAGE_URL,
         )
 
         self.auth_user(self.account)

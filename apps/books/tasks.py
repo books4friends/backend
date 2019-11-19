@@ -6,14 +6,14 @@ import imghdr
 
 from django.core.files import File
 
-from .models import BookDetail
+from .models import BookDetail, BookItem
 
 
 @shared_task
-def download_external_image(book_detail_id):
-    book = BookDetail.objects.get(pk=book_detail_id)
+def download_external_image(book_id):
+    book = BookItem.objects.get(pk=book_id)
     image = urllib.request.urlretrieve(book.image_external_url)
     file = File(open(image[0], 'rb'))
-    file_name = "book_{}.{}".format(book.id, imghdr.what(file))
+    file_name = "book_g_{}.{}".format(book.detail.external_id, imghdr.what(file))
     book.image.save(file_name, file)
     book.save()

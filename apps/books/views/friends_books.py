@@ -146,7 +146,7 @@ class GetFriendsBooksListView(View):
                 "description": {
                     "title": book.detail.title,
                     "author": book.detail.author,
-                    "image": book.detail.image.url if book.detail.image.name else None,
+                    "image": book.image.url if book.image.name else None,
                 },
                 "comment": book.comment
             } for book in books]

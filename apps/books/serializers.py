@@ -11,10 +11,10 @@ class BookItemSerializer:
 
     @classmethod
     def _serialize_one(cls, book):
-        if book.detail.image.name:
-            image = book.detail.image.url
-        elif book.detail.image_external_url:
-            image = book.detail.image_external_url
+        if book.image.name:
+            image = book.image.url
+        elif book.image_external_url:
+            image = book.image_external_url
         else:
             image = None
 
