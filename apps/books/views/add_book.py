@@ -87,4 +87,4 @@ class AddMyBookView(View):
     def _save_external_image(self, book_item, form):
         book_item.image_external_url = form.cleaned_data['external_image']
         book_item.save()
-        download_external_image(book_item.pk)
+        download_external_image.delay(book_item.pk)
