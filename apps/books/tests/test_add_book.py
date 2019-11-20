@@ -158,6 +158,7 @@ class AddBookViewTest(TestCase, AuthMixin):
             'title': GOOGLE_TITLE,
             'author': GOOGLE_AUTHOR,
             'external_id': GOOGLE_BOOK_ID,
+            'external_image': GOOGLE_IMAGE_URL,
             'comment': COMMENT,
         })
         self.assertEqual(account.bookitem_set.all().count(), 1)
@@ -189,14 +190,14 @@ class AddBookViewTest(TestCase, AuthMixin):
         )
 
     @override_settings(MEDIA_ROOT=tempfile.gettempdir())
-    def test_adding_with_google_fake(self):
+    def test_adding_with_external_image(self):
         account = Account.objects.get(vk_id=VK_ID)
         self.auth_user(account)
 
         response = self.client.post('/app/api/my-books/add/', {
             'title': GOOGLE_TITLE,
             'author': GOOGLE_AUTHOR,
-            'external_id': GOOGLE_FAKE_BOOK_ID,
+            'external_image': GOOGLE_IMAGE_URL,
             'comment': COMMENT,
         })
         self.assertEqual(account.bookitem_set.all().count(), 1)
@@ -205,6 +206,7 @@ class AddBookViewTest(TestCase, AuthMixin):
         self.assertEqual(book_item.detail.title, GOOGLE_TITLE)
         self.assertEqual(book_item.detail.author, GOOGLE_AUTHOR)
         self.assertEqual(book_item.detail.source, BookDetail.SOURCE.CUSTOM)
+        self.assertIn(GOOGLE_IMAGE_URL, book_item.image_external_url)
         self.assertEqual(book_item.comment, COMMENT)
         self.assertEqual(book_item.status, BookItem.STATUS.ACTIVE)
 
@@ -218,7 +220,7 @@ class AddBookViewTest(TestCase, AuthMixin):
                     "description": {
                         "title": GOOGLE_TITLE,
                         "author": GOOGLE_AUTHOR,
-                        "image": None,
+                        "image": book_item.image_external_url
                     },
                     "comment": COMMENT,
                     "active": True

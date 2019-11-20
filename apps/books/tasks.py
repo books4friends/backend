@@ -14,6 +14,6 @@ def download_external_image(book_id):
     book = BookItem.objects.get(pk=book_id)
     image = urllib.request.urlretrieve(book.image_external_url)
     file = File(open(image[0], 'rb'))
-    file_name = "book_g_{}.{}".format(book.detail.external_id, imghdr.what(file))
+    file_name = "book_g_{}.{}".format(book_id, imghdr.what(file))
     book.image.save(file_name, file)
     book.save()
