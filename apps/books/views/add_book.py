@@ -7,7 +7,7 @@ from django.views import View
 from apps.utils.auth import auth_decorator
 from PIL import Image
 
-from ..serializers import BookItemSerializer
+from ..serializers import BookSerializer
 from ..forms import AddBookForm
 from ..tasks import download_external_image
 
@@ -50,7 +50,7 @@ class AddMyBookView(View):
 
         BookAudit.create_audit(book, self.request.session.get('vk_session_id'),
                                    BookAudit.ACTION_TYPE.ADD)
-        return JsonResponse({'success': True, 'book': BookItemSerializer.serialize(book)})
+        return JsonResponse({'success': True, 'book': BookSerializer.serialize(book)})
 
     def _already_added(self, form):
         return Book.objects.filter(

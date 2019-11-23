@@ -1,7 +1,7 @@
 from .models import Book
 
 
-class BookItemSerializer:
+class BookSerializer:
     @classmethod
     def serialize(cls, obj):
         if isinstance(obj, Book):

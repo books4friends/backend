@@ -16,6 +16,7 @@ from apps.utils.auth import auth_decorator
 from ..models import Book
 from ...vk_service.api import get_friends_list
 from ...accounts.models import Account
+from ..serializers import BookSerializer
 
 
 def friends_decorator(function):
@@ -143,12 +144,7 @@ class GetFriendsBooksListView(View):
         return {
             "books": [{
                 "owner": friends_dict[book.account_id],
-                "description": {
-                    "title": book.title,
-                    "author": book.author,
-                    "image": book.image.url if book.image.name else None,
-                },
-                "comment": book.comment
+                "item": BookSerializer.serialize(book)
             } for book in books]
         }
 
