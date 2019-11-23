@@ -11,7 +11,7 @@ from ..serializers import BookItemSerializer
 from ..forms import AddBookForm
 from ..tasks import download_external_image
 
-from ..models import BookDetail, BookItem, BookItemAudit
+from ..models import Book, BookAudit
 
 
 GOOGLE_VOLUME_API = "https://www.googleapis.com/books/v1/volumes/{}"
@@ -21,59 +21,46 @@ class AddMyBookView(View):
     @auth_decorator
     def post(self, request, *args, **kwargs):
         form = AddBookForm(request.POST, request.FILES)
-        if form.is_valid():
-            if self._already_added(form):
-                return JsonResponse({'success': False, 'error_type': 'ALREADY_ADDED',
-                                     'title': form.cleaned_data['title'], 'author': form.cleaned_data['author']})
 
-            book_detail = self._get_or_create_book(form)
-
-            book_item = BookItem.objects.create(
-                detail=book_detail,
-                account_id=self.request.session['account_id'],
-                comment=form.cleaned_data['comment']
-            )
-
-            if form.cleaned_data['external_id']:
-                book_detail.source = BookDetail.SOURCE.GOOGLE
-                book_detail.external_id = form.cleaned_data['external_id']
-                book_detail.save()
-
-            if form.cleaned_data['image']:
-                self._save_image(book_item, form)
-            elif form.cleaned_data['external_image']:
-                self._save_external_image(book_item, form)
-
-            BookItemAudit.create_audit(book_item, self.request.session.get('vk_session_id'),
-                                       BookItemAudit.ACTION_TYPE.ADD)
-            return JsonResponse({'success': True, 'book': BookItemSerializer.serialize(book_item)})
-        else:
+        if not form.is_valid():
             return JsonResponse({'success': False, 'error_type': 'FORM_NOT_VALID', 'errors': form.errors})
+        if self._already_added(form):
+            return JsonResponse({'success': False, 'error_type': 'ALREADY_ADDED',
+                                 'title': form.cleaned_data['title'], 'author': form.cleaned_data['author']})
+
+        book = Book(
+            account_id=self.request.session['account_id'],
+            title=form.cleaned_data['title'],
+            author=form.cleaned_data['author'],
+            comment=form.cleaned_data['comment']
+        )
+
+        if form.cleaned_data['external_id']:
+            book.source = Book.SOURCE.GOOGLE
+            book.external_id = form.cleaned_data['external_id']
+        else:
+            book.source = Book.SOURCE.CUSTOM
+
+        book.save()
+
+        if form.cleaned_data['image']:
+            self._save_custom_image(book, form)
+        elif form.cleaned_data['external_image']:
+            self._save_external_image(book, form)
+
+        BookAudit.create_audit(book, self.request.session.get('vk_session_id'),
+                                   BookAudit.ACTION_TYPE.ADD)
+        return JsonResponse({'success': True, 'book': BookItemSerializer.serialize(book)})
 
     def _already_added(self, form):
-        return BookItem.objects.filter(
+        return Book.objects.filter(
             account_id=self.request.session['account_id'],
-            status__in=[BookItem.STATUS.ACTIVE, BookItem.STATUS.NOT_ACTIVE],
-            detail__title=form.cleaned_data['title'],
-            detail__author=form.cleaned_data['author']
+            status__in=[Book.STATUS.ACTIVE, Book.STATUS.NOT_ACTIVE],
+            title=form.cleaned_data['title'],
+            author=form.cleaned_data['author']
         ).exists()
 
-    def _get_or_create_book(self, form):
-        if form.cleaned_data['image']:
-            book_detail = BookDetail.objects.create(
-                source=BookDetail.SOURCE.CUSTOM,
-                title=form.cleaned_data['title'],
-                author=form.cleaned_data['author']
-            )
-        else:
-            book_detail, _ = BookDetail.objects.get_or_create(
-                source=BookDetail.SOURCE.CUSTOM,
-                title=form.cleaned_data['title'],
-                author=form.cleaned_data['author'],
-            )
-        return book_detail
-
-    def _save_image(self, book_item, form):
+    def _save_custom_image(self, book, form):
         from io import BytesIO
         from django.core.files import File
         if form.cleaned_data['image']:
@@ -82,9 +69,9 @@ class AddMyBookView(View):
             image.thumbnail(size)
             blob = BytesIO()
             image.save(blob, 'JPEG')
-            book_item.image.save('book_{}.jpg'.format(book_item.id), File(blob), save=True)
+            book.image.save('book_{}.jpg'.format(book.id), File(blob), save=True)
 
-    def _save_external_image(self, book_item, form):
-        book_item.image_external_url = form.cleaned_data['external_image']
-        book_item.save()
-        download_external_image.delay(book_item.pk)
+    def _save_external_image(self, book, form):
+        book.image_external_url = form.cleaned_data['external_image']
+        book.save()
+        download_external_image.delay(book.pk)

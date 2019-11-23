@@ -5,16 +5,16 @@ from apps.utils.auth import auth_decorator
 
 from ..serializers import BookItemSerializer
 
-from ..models import BookItem
+from ..models import Book
 
 
 class MyBooksList(View):
     @auth_decorator
     def get(self, request, *args, **kwargs):
         account_id = request.session.get('account_id')
-        books = BookItem.objects.filter(
+        books = Book.objects.filter(
             account_id=account_id,
-            status__in=[BookItem.STATUS.ACTIVE, BookItem.STATUS.NOT_ACTIVE],
-        ).order_by('-pk').select_related('detail')
+            status__in=[Book.STATUS.ACTIVE, Book.STATUS.NOT_ACTIVE],
+        ).order_by('-pk')
         books_json = BookItemSerializer.serialize(books)
         return JsonResponse({"books": books_json})

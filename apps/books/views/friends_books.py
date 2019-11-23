@@ -13,7 +13,7 @@ from django.http.response import JsonResponse
 
 from apps.utils.auth import auth_decorator
 
-from ..models import BookItem
+from ..models import Book
 from ...vk_service.api import get_friends_list
 from ...accounts.models import Account
 
@@ -25,13 +25,13 @@ def friends_decorator(function):
         all_friends = Account.objects.filter(
             vk_id__in=friends_ids,
             privacy_type=Account.PRIVACY_TYPE.ALL_FRIENDS
-        ).exclude(bookitem__isnull=True).values('id', 'vk_id')
+        ).exclude(books__isnull=True).values('id', 'vk_id')
 
         whitelist_friends = Account.objects.filter(
             vk_id__in=friends_ids,
             privacy_type=Account.PRIVACY_TYPE.ONLY_SOME_FRIENDS,
             friendswhitelist__friend_ext_id=session['vk_id']
-        ).exclude(bookitem__isnull=True).values('id', 'vk_id')
+        ).exclude(books__isnull=True).values('id', 'vk_id')
 
         blacklist_friends = Account.objects.filter(
             vk_id__in=friends_ids,
@@ -39,7 +39,7 @@ def friends_decorator(function):
         ).exclude(
             friendsblacklist__friend_ext_id=session['vk_id']
         ).exclude(
-            bookitem__isnull=True
+            books__isnull=True
         ).values('id', 'vk_id')
 
         filtered_friends = list(all_friends) + list(whitelist_friends) + list(blacklist_friends)
@@ -111,14 +111,14 @@ class GetFriendsBooksListView(View):
         if request.GET.get('friend'):
             friends_list = self.filter_friends_by_friend(friends_list, int(request.GET.get('friend')))
 
-        books = BookItem.objects.filter(
+        books = Book.objects.filter(
             account__in=[friend['account_id'] for friend in friends_list]
-        ).prefetch_related('detail')
+        )
 
         if request.GET.get('search'):
             keywords = re.findall(r'\b\w+\b', request.GET.get('search'))
             keywords = [keyword.lower() for keyword in keywords]
-            books = books.annotate(title_and_author=Concat(F('detail__title'), Value(' '), F('detail__author')))
+            books = books.annotate(title_and_author=Concat(F('title'), Value(' '), F('author')))
             query = reduce(operator.and_, (Q(title_and_author__icontains=item) for item in keywords))
             books = books.filter(query)
 
@@ -144,8 +144,8 @@ class GetFriendsBooksListView(View):
             "books": [{
                 "owner": friends_dict[book.account_id],
                 "description": {
-                    "title": book.detail.title,
-                    "author": book.detail.author,
+                    "title": book.title,
+                    "author": book.author,
                     "image": book.image.url if book.image.name else None,
                 },
                 "comment": book.comment

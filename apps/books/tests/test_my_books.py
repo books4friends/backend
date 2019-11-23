@@ -5,7 +5,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from apps.frontend.tests.utils import AuthMixin
 from apps.accounts.models import Account
-from apps.books.models import BookDetail, BookItem
+from apps.books.models import Book
 
 VK_ID = 'VK_ID'
 ELSE_ACCOUNT = 'ELSE_ACCOUNT'
@@ -35,9 +35,10 @@ class MyBooksListViewTest(TestCase, AuthMixin):
     def test_custom_book(self):
         custom_image = SimpleUploadedFile(
             name='test_image.jpg', content=open(IMAGE_PATH, 'rb').read(), content_type='image/jpeg')
-        book_item = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR),
+        book = self.book = Book.objects.create(
             account=self.account,
+            title=TITLE,
+            author=AUTHOR,
             image=custom_image
         )
 
@@ -48,8 +49,8 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             response.content.decode("utf-8"),
             {
                 "books": [{
-                    "id": str(book_item.id),
-                    "description": {"title": TITLE, "author": AUTHOR, "image": book_item.image.url},
+                    "id": str(book.id),
+                    "description": {"title": TITLE, "author": AUTHOR, "image": book.image.url},
                     "comment": '',
                     "active": True
                 }]
@@ -60,12 +61,13 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         custom_image = SimpleUploadedFile(
             name='test_image.jpg', content=open(IMAGE_PATH, 'rb').read(), content_type='image/jpeg'
         )
-        book_item = self.book_item = BookItem.objects.create(
+        book = self.book = Book.objects.create(
             account=self.account,
             image=custom_image,
             image_external_url=GOOGLE_IMAGE_URL,
-            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR,
-                                             source=BookDetail.SOURCE.GOOGLE),
+            title=TITLE,
+            author=AUTHOR,
+            source=Book.SOURCE.GOOGLE,
         )
 
         self.auth_user(self.account)
@@ -75,8 +77,8 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             response.content.decode("utf-8"),
             {
                 "books": [{
-                    "id": str(book_item.id),
-                    "description": {"title": TITLE, "author": AUTHOR, "image": book_item.image.url},
+                    "id": str(book.id),
+                    "description": {"title": TITLE, "author": AUTHOR, "image": book.image.url},
                     "comment": '',
                     "active": True
                 }]
@@ -84,9 +86,11 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
     def test_google_book_with_not_downloaded_image(self):
-        book_item = self.book_item = BookItem.objects.create(
+        book = self.book = Book.objects.create(
             account=self.account,
-            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR, source=BookDetail.SOURCE.GOOGLE),
+            title=TITLE,
+            author=AUTHOR,
+            source=Book.SOURCE.GOOGLE,
             image_external_url=GOOGLE_IMAGE_URL,
         )
 
@@ -97,7 +101,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             response.content.decode("utf-8"),
             {
                 "books": [{
-                    "id": str(book_item.id),
+                    "id": str(book.id),
                     "description": {"title": TITLE, "author": AUTHOR, "image": GOOGLE_IMAGE_URL},
                     "comment": '',
                     "active": True
@@ -106,9 +110,10 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
     def test_book_with_no_comment(self):
-        book_item = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR),
-            account=self.account
+        book = self.book = Book.objects.create(
+            account=self.account,
+            title=TITLE,
+            author=AUTHOR,
         )
 
         self.auth_user(self.account)
@@ -118,7 +123,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             response.content.decode("utf-8"),
             {
                 "books": [{
-                    "id": str(book_item.id),
+                    "id": str(book.id),
                     "description": {"title": TITLE, "author": AUTHOR, "image": None},
                     "comment": '',
                     "active": True
@@ -127,9 +132,10 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
     def test_book_with_comment(self):
-        book_item = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR),
+        book = self.book = Book.objects.create(
             account=self.account,
+            title=TITLE,
+            author=AUTHOR,
             comment=COMMENT
         )
 
@@ -140,7 +146,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             response.content.decode("utf-8"),
             {
                 "books": [{
-                    "id": str(book_item.id),
+                    "id": str(book.id),
                     "description": {"title": TITLE, "author": AUTHOR, "image": None},
                     "comment": COMMENT,
                     "active": True
@@ -149,9 +155,10 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
     def test_book_with_author(self):
-        book_item = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR),
+        book = self.book = Book.objects.create(
             account=self.account,
+            title=TITLE,
+            author=AUTHOR,
         )
 
         self.auth_user(self.account)
@@ -161,7 +168,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             response.content.decode("utf-8"),
             {
                 "books": [{
-                    "id": str(book_item.id),
+                    "id": str(book.id),
                     "description": {"title": TITLE, "author": AUTHOR, "image": None},
                     "comment": "",
                     "active": True
@@ -170,9 +177,9 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
     def test_book_without_author(self):
-        book_item = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE),
+        book = self.book = Book.objects.create(
             account=self.account,
+            title=TITLE
         )
 
         self.auth_user(self.account)
@@ -182,7 +189,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             response.content.decode("utf-8"),
             {
                 "books": [{
-                    "id": str(book_item.id),
+                    "id": str(book.id),
                     "description": {"title": TITLE, "author": None, "image": None},
                     "comment": "",
                     "active": True
@@ -191,10 +198,11 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
     def test_deactivated(self):
-        book_item = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR),
+        book = self.book = Book.objects.create(
             account=self.account,
-            status=BookItem.STATUS.NOT_ACTIVE
+            title=TITLE,
+            author=AUTHOR,
+            status=Book.STATUS.NOT_ACTIVE
         )
 
         self.auth_user(self.account)
@@ -204,7 +212,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             response.content.decode("utf-8"),
             {
                 "books": [{
-                    "id": str(book_item.id),
+                    "id": str(book.id),
                     "description": {"title": TITLE, "author": AUTHOR, "image": None},
                     "comment": "",
                     "active": False
@@ -213,10 +221,11 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
     def test_deleted(self):
-        book_item = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR),
+        book = self.book = Book.objects.create(
             account=self.account,
-            status=BookItem.STATUS.DELETED
+            title=TITLE,
+            author=AUTHOR,
+            status=Book.STATUS.DELETED
         )
 
         self.auth_user(self.account)
@@ -241,9 +250,10 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
     def test_someone_else_book(self):
-        book_item = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR),
+        book = self.book = Book.objects.create(
             account=self.account,
+            title=TITLE,
+            author=AUTHOR,
         )
 
         self.auth_user(Account.objects.create(vk_id=ELSE_ACCOUNT))
@@ -257,19 +267,22 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
     def test_a_few_book_list(self):
-        book_item1 = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE, author=AUTHOR),
+        book_item1 = self.book = Book.objects.create(
             account=self.account,
+            title=TITLE,
+            author=AUTHOR,
         )
-        book_item2 = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE_2, author=AUTHOR_2),
+        book_item2 = self.book = Book.objects.create(
             account=self.account,
-            status=BookItem.STATUS.NOT_ACTIVE
+            title=TITLE_2,
+            author=AUTHOR_2,
+            status=Book.STATUS.NOT_ACTIVE
         )
-        book_item3 = self.book_item = BookItem.objects.create(
-            detail=BookDetail.objects.create(title=TITLE_3, author=AUTHOR_3),
+        book_item3 = self.book = Book.objects.create(
             account=self.account,
-            status=BookItem.STATUS.DELETED
+            title=TITLE_3,
+            author=AUTHOR_3,
+            status=Book.STATUS.DELETED
         )
 
         self.auth_user(self.account)

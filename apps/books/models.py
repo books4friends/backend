@@ -1,5 +1,4 @@
 from django.db import models
-from sorl.thumbnail import ImageField
 
 import json
 
@@ -8,23 +7,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from apps.accounts.models import VkSession
 
 
-class BookDetail(models.Model):
-    class SOURCE:
-        CUSTOM = 0
-        GOOGLE = 1
-    SOURCE_CHOICES = (
-        (SOURCE.CUSTOM, 'custom'),
-        (SOURCE.GOOGLE, 'google'),
-    )
-    title = models.CharField(max_length=255)
-    author = models.CharField(max_length=255, null=True, blank=True)
-    source = models.SmallIntegerField(choices=SOURCE_CHOICES, default=SOURCE.CUSTOM)
-    external_id = models.CharField(max_length=255, unique=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-
-class BookItem(models.Model):
+class Book(models.Model):
     class STATUS:
         ACTIVE = 0
         NOT_ACTIVE = 1
@@ -35,13 +18,25 @@ class BookItem(models.Model):
         (STATUS.DELETED, "deleted"),
     )
 
-    detail = models.ForeignKey('BookDetail', on_delete=models.PROTECT)
-    account = models.ForeignKey('accounts.Account', on_delete=models.PROTECT)
-    status = models.SmallIntegerField(choices=STATUS_CHOICES, default=STATUS.ACTIVE)
-    comment = models.TextField()
+    class SOURCE:
+        CUSTOM = 0
+        GOOGLE = 1
+    SOURCE_CHOICES = (
+        (SOURCE.CUSTOM, 'custom'),
+        (SOURCE.GOOGLE, 'google'),
+    )
 
+    account = models.ForeignKey('accounts.Account', on_delete=models.PROTECT, related_name='books')
+
+    title = models.CharField(max_length=255)
+    author = models.CharField(max_length=255, null=True, blank=True)
+    source = models.SmallIntegerField(choices=SOURCE_CHOICES, default=SOURCE.CUSTOM)
+    external_id = models.CharField(max_length=255, unique=True, null=True)
     image = models.ImageField(upload_to='books/', null=True)
     image_external_url = models.URLField(max_length=512, null=True, blank=True)
+
+    status = models.SmallIntegerField(choices=STATUS_CHOICES, default=STATUS.ACTIVE)
+    comment = models.TextField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -50,7 +45,7 @@ class BookItem(models.Model):
         ordering = ('-created_at', )
 
 
-class BookItemAudit(models.Model):
+class BookAudit(models.Model):
     class ACTION_TYPE(object):
         ADD = 0
         ACTIVATE = 1
@@ -66,20 +61,20 @@ class BookItemAudit(models.Model):
         (ACTION_TYPE.DELETE, 'delete'),
     )
 
-    book_item = models.ForeignKey('BookItem', on_delete=models.CASCADE)
+    book = models.ForeignKey('Book', on_delete=models.CASCADE)
     vk_session = models.ForeignKey(VkSession, on_delete=models.PROTECT)
     action_type = models.SmallIntegerField(choices=ACTION_TYPE_CHOICES)
     dump = models.TextField("Dump")
     created_at = models.DateTimeField(auto_now_add=True)
 
     @classmethod
-    def create_audit(cls, book_item, vk_session_id, action_type):
-        log = BookItemAudit()
-        log.book_item = book_item
+    def create_audit(cls, book, vk_session_id, action_type):
+        log = BookAudit()
+        log.book = book
         log.vk_session_id = vk_session_id
         log.action_type = action_type
         log.dump = json.dumps(
-            list(BookItem.objects.filter(id=book_item.id).values()),
+            list(Book.objects.filter(id=book.id).values()),
             cls=DjangoJSONEncoder
         )
         log.save()

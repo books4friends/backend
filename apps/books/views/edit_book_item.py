@@ -7,69 +7,69 @@ from django.shortcuts import get_object_or_404
 
 from apps.utils.auth import auth_decorator
 
-from ..models import BookItem
+from ..models import Book
 from ..forms import EditBookItemCommentForm
 
 
 class EditBookItemCommentView(View):
     @auth_decorator
     def post(self, request, book_id, *args, **kwargs):
-        book_item = get_object_or_404(
-            BookItem,
+        book = get_object_or_404(
+            Book,
             pk=book_id,
             account_id=self.request.session['account_id'],
-            status__in=[BookItem.STATUS.NOT_ACTIVE, BookItem.STATUS.ACTIVE]
+            status__in=[Book.STATUS.NOT_ACTIVE, Book.STATUS.ACTIVE]
         )
 
         data = json.loads(request.body.decode('utf-8'))
         form = EditBookItemCommentForm(data)
         if form.is_valid():
-            book_item.comment = form.cleaned_data['comment']
-            book_item.save(update_fields=['comment'])
-            return JsonResponse({'success': True, 'book_id': book_item.id})
+            book.comment = form.cleaned_data['comment']
+            book.save(update_fields=['comment'])
+            return JsonResponse({'success': True, 'book_id': book.id})
         else:
-            return JsonResponse({'success': False, 'book_id': book_item.id})
+            return JsonResponse({'success': False, 'book_id': book.id})
 
 
 class ActivateBookItemView(View):
     @auth_decorator
     def post(self, request, book_id, *args, **kwargs):
-        book_item = get_object_or_404(
-            BookItem,
+        book = get_object_or_404(
+            Book,
             pk=book_id,
             account_id=self.request.session['account_id'],
-            status=BookItem.STATUS.NOT_ACTIVE
+            status=Book.STATUS.NOT_ACTIVE
         )
-        book_item.status = BookItem.STATUS.ACTIVE
-        book_item.save(update_fields=['status'])
-        return JsonResponse({'success': True, 'book_id': book_item.id})
+        book.status = Book.STATUS.ACTIVE
+        book.save(update_fields=['status'])
+        return JsonResponse({'success': True, 'book_id': book.id})
 
 
 class DeactivateBookItemView(View):
     @auth_decorator
     def post(self, request, book_id, *args, **kwargs):
-        book_item = get_object_or_404(
-            BookItem,
+        book = get_object_or_404(
+            Book,
             pk=book_id,
             account_id=self.request.session['account_id'],
-            status=BookItem.STATUS.ACTIVE
+            status=Book.STATUS.ACTIVE
         )
-        book_item.status = BookItem.STATUS.NOT_ACTIVE
-        book_item.save(update_fields=['status'])
-        return JsonResponse({'success': True, 'book_id': book_item.id})
+        book.status = Book.STATUS.NOT_ACTIVE
+        book.save(update_fields=['status'])
+        return JsonResponse({'success': True, 'book_id': book.id})
 
 
 class DeleteBookView(View):
     @auth_decorator
     def post(self, request, book_id, *args, **kwargs):
-        book_item = get_object_or_404(
-            BookItem,
+        book = get_object_or_404(
+            Book,
             pk=book_id,
             account_id=self.request.session['account_id'],
-            status__in=[BookItem.STATUS.NOT_ACTIVE, BookItem.STATUS.ACTIVE]
+            status__in=[Book.STATUS.NOT_ACTIVE, Book.STATUS.ACTIVE]
         )
 
-        book_item.status = BookItem.STATUS.DELETED
-        book_item.save(update_fields=['status'])
+        book.status = Book.STATUS.DELETED
+        book.save(update_fields=['status'])
 
-        return JsonResponse({'success': True, 'book_id': book_item.id})
+        return JsonResponse({'success': True, 'book_id': book.id})

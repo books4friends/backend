@@ -1,10 +1,10 @@
-from .models import BookItem
+from .models import Book
 
 
 class BookItemSerializer:
     @classmethod
     def serialize(cls, obj):
-        if isinstance(obj, BookItem):
+        if isinstance(obj, Book):
             return cls._serialize_one(obj)
         else:
             return cls._serialize_list(obj)
@@ -20,13 +20,13 @@ class BookItemSerializer:
 
         return {
             "id": str(book.pk),
-            "description":{
-                "title": book.detail.title,
-                "author": book.detail.author,
+            "description": {
+                "title": book.title,
+                "author": book.author,
                 "image": image,
             },
             "comment": book.comment,
-            "active": book.status == BookItem.STATUS.ACTIVE,
+            "active": book.status == Book.STATUS.ACTIVE,
 
         }
 
