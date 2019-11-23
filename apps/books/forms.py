@@ -10,5 +10,5 @@ class AddBookForm(forms.Form):
     external_image = forms.URLField(required=False)
 
 
-class EditBookItemCommentForm(forms.Form):
+class EditBookCommentForm(forms.Form):
     comment = forms.CharField(max_length=1024, required=True)

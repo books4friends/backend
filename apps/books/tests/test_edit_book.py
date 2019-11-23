@@ -13,7 +13,7 @@ OLD_COMMENT = 'OLD_COMMENT'
 NEW_COMMENT = 'NEW_COMMENT'
 
 
-class ActivateBookItemViewTest(TestCase, AuthMixin):
+class ActivateBookViewTest(TestCase, AuthMixin):
     def setUp(self):
         self.account = Account.objects.create(vk_id=VK_ID)
         self.else_account = Account.objects.create(vk_id=ELSE_VK_ID)
@@ -59,7 +59,7 @@ class ActivateBookItemViewTest(TestCase, AuthMixin):
         self.assertEquals(self.book.status, Book.STATUS.NOT_ACTIVE)
 
 
-class DeactivateBookItemViewTest(TestCase, AuthMixin):
+class DeactivateBookViewTest(TestCase, AuthMixin):
     def setUp(self):
         self.account = Account.objects.create(vk_id=VK_ID)
         self.else_account = Account.objects.create(vk_id=ELSE_VK_ID)
@@ -154,7 +154,7 @@ class DeleteBookViewTest(TestCase, AuthMixin):
         self.assertEquals(self.book.status, Book.STATUS.ACTIVE)
 
 
-class EditBookItemCommentViewTest(TestCase, AuthMixin):
+class EditBookCommentViewTest(TestCase, AuthMixin):
     def setUp(self):
         self.account = Account.objects.create(vk_id=VK_ID)
         self.else_account = Account.objects.create(vk_id=ELSE_VK_ID)

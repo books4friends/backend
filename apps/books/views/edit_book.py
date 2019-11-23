@@ -8,10 +8,10 @@ from django.shortcuts import get_object_or_404
 from apps.utils.auth import auth_decorator
 
 from ..models import Book
-from ..forms import EditBookItemCommentForm
+from ..forms import EditBookCommentForm
 
 
-class EditBookItemCommentView(View):
+class EditBookCommentView(View):
     @auth_decorator
     def post(self, request, book_id, *args, **kwargs):
         book = get_object_or_404(
@@ -22,7 +22,7 @@ class EditBookItemCommentView(View):
         )
 
         data = json.loads(request.body.decode('utf-8'))
-        form = EditBookItemCommentForm(data)
+        form = EditBookCommentForm(data)
         if form.is_valid():
             book.comment = form.cleaned_data['comment']
             book.save(update_fields=['comment'])
@@ -31,7 +31,7 @@ class EditBookItemCommentView(View):
             return JsonResponse({'success': False, 'book_id': book.id})
 
 
-class ActivateBookItemView(View):
+class ActivateBookView(View):
     @auth_decorator
     def post(self, request, book_id, *args, **kwargs):
         book = get_object_or_404(
@@ -45,7 +45,7 @@ class ActivateBookItemView(View):
         return JsonResponse({'success': True, 'book_id': book.id})
 
 
-class DeactivateBookItemView(View):
+class DeactivateBookView(View):
     @auth_decorator
     def post(self, request, book_id, *args, **kwargs):
         book = get_object_or_404(

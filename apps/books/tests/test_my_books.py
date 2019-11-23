@@ -267,18 +267,18 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
     def test_a_few_book_list(self):
-        book_item1 = self.book = Book.objects.create(
+        book1 = self.book = Book.objects.create(
             account=self.account,
             title=TITLE,
             author=AUTHOR,
         )
-        book_item2 = self.book = Book.objects.create(
+        book2 = self.book = Book.objects.create(
             account=self.account,
             title=TITLE_2,
             author=AUTHOR_2,
             status=Book.STATUS.NOT_ACTIVE
         )
-        book_item3 = self.book = Book.objects.create(
+        book3 = self.book = Book.objects.create(
             account=self.account,
             title=TITLE_3,
             author=AUTHOR_3,
@@ -296,7 +296,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         self.assertEquals(len(response_json), 2)
         self.assertEquals(
             response_json[1], {
-                "id": str(book_item1.id),
+                "id": str(book1.id),
                 "description": {"title": TITLE, "author": AUTHOR, "image": None},
                 "comment": "",
                 "active": True
@@ -304,7 +304,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
         self.assertEquals(
             response_json[0], {
-                "id": str(book_item2.id),
+                "id": str(book2.id),
                 "description": {"title": TITLE_2, "author": AUTHOR_2, "image": None},
                 "comment": "",
                 "active": False
