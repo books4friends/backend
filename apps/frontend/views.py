@@ -6,6 +6,7 @@ from django.views import View
 from django.http.response import JsonResponse
 from django.http import HttpResponse
 from django.utils.timezone import make_aware
+from django.utils import translation
 
 from apps.accounts.models import Account, VkSession
 from apps.utils.auth import auth_decorator
@@ -29,17 +30,26 @@ class VkRedirectUrl(View):
         if not (access_token and expires_in and vk_id) or not check_token(access_token, vk_id):
             return HttpResponse('Unauthorized', status=401)
 
-        account, _ = Account.objects.get_or_create(vk_id=vk_id)
+        account, created = Account.objects.get_or_create(vk_id=vk_id)
+        if created:
+            self._save_locale(account)
         expires_at = make_aware(datetime.datetime.now() + datetime.timedelta(seconds=int(expires_in)))
         vk_session = VkSession.objects.create(account=account, access_token=access_token, expires_at=expires_at)
 
         request.session.set_expiry(int(expires_in))
+        request.session[translation.LANGUAGE_SESSION_KEY] = account.locale
         request.session['vk_session_id'] = vk_session.id
         request.session['access_token'] = access_token
         request.session['account_id'] = account.id
         request.session['vk_id'] = vk_id
 
         return redirect('app')
+
+    def _save_locale(self, account):
+        lang = self.request.LANGUAGE_CODE
+        if lang and lang in Account.LOCALES:
+            account.locale = lang
+            account.save(update_fields=['locale'])
 
 
 class RootView(View):
