@@ -25,7 +25,8 @@ def friends_decorator(function):
         friends_ids = [f['external_id'] for f in friends]
         all_friends = Account.objects.filter(
             vk_id__in=friends_ids,
-            privacy_type=Account.PRIVACY_TYPE.ALL_FRIENDS
+            privacy_type=Account.PRIVACY_TYPE.ALL_FRIENDS,
+            books__status=Book.STATUS.ACTIVE,
         ).exclude(books__isnull=True).values('id', 'vk_id')
 
         whitelist_friends = Account.objects.filter(
@@ -113,7 +114,8 @@ class GetFriendsBooksListView(View):
             friends_list = self.filter_friends_by_friend(friends_list, int(request.GET.get('friend')))
 
         books = Book.objects.filter(
-            account__in=[friend['account_id'] for friend in friends_list]
+            account__in=[friend['account_id'] for friend in friends_list],
+            status=Book.STATUS.ACTIVE,
         )
 
         if request.GET.get('search'):
