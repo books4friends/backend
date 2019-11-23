@@ -1,9 +1,11 @@
 <!DOCTYPE html>
+{% load i18n %}
 <html>
     <head>
     </head>
     <body>
-        <a href="https://oauth.vk.com/authorize?client_id={{vk_app_id}}&display=page&scope=friends,offline&response_type=token&v=5.92&redirect_uri=http://{{root_url}}/vk_redirect_uri/">Авторизоваться</a>
-
+        <a href="https://oauth.vk.com/authorize?client_id={{vk_app_id}}&display=page&scope=friends,offline&response_type=token&v=5.92&redirect_uri=http://{{root_url}}/vk_redirect_uri/">
+            {% trans "authorize" %}
+        </a>
     </body>
 </html>

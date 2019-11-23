@@ -17,6 +17,7 @@ class Account(models.Model):
     class LOCALE:
         EN = 'en'
         RU = 'ru'
+    LOCALES = (LOCALE.EN, LOCALE.RU)
     LOCALE_CHOICES = (
         (LOCALE.EN, 'English'),
         (LOCALE.RU, 'Russian'),
