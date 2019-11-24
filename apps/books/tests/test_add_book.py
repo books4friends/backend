@@ -12,11 +12,13 @@ from apps.books.models import Book
 VK_ID = 'VK_ID'
 TITLE = 'Ходячий замок'
 AUTHOR = 'Диана Уинн Джонс'
+DESCRIPTION = 'Книги английской писательницы Дианы У. Джонс настолько ярки, что так и просятся на экран. По ее бестселлеру "Ходячий замок" знаменитый мультипликатор Хаяо Миядзаки ("Унесенные призраками"), обладатель "Золотого льва" - высшей награды Венецианского фестиваля, снял анимационный фильм, побивший в Японии рекорды кассовых сборов. Софи живет в сказочной стране, где ведьмы и русалки, семимильные сапоги и говорящие собаки - обычное дело. Поэтому, когда на нее обрушивается ужасное проклятие коварной Болотной Ведьмы, Софи ничего не остается, как обратиться за помощью к таинственному чародею Хоулу, обитающему в ходячем замке. Однако, чтобы освободиться от чар, Софи предстоит разгадать немало загадок и прожить в замке у Хоула гораздо дольше, чем она рассчитывала. А для этого нужно подружиться с огненным демоном, поймать падучую звезду, подслушать пение русалок, отыскать мандрагору и многое, многое другое.'
 COMMENT = 'Могу подарить'
 IMAGE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'tests/custom_image.jpg')
 GOOGLE_TITLE = 'Чернильная кровь'
 GOOGLE_AUTHOR = 'Корнелия Функе'
 GOOGLE_BOOK_ID = 'C3hWAgAAQBAJ'
+GOOGLE_DESCRIPTION = '«Чернильная кровь» — вторая часть трилогии знаменитой немецкой писательницы Корнелии Функе. Все поклонники ее творчества с удовольствием прочтут продолжение детективной истории героев «Чернильного сердца», ставшего событием не только в истории жанра фэнтези, но и вообще в книжном мире. Во второй части рассказывается о приключениях героев, попавших в Чернильный мир - мир из бумаги и типографской краски. Сажерук возвращается домой. Фарид и Мегги следуют за ним, а вскоре туда отправляются и родители Мегги. В этом мире, сочиненном Фенолио, где живут феи и русалки, так легко погибнуть по произволу злого правителя. Героев ждут нелегкие испытания, но они достойно встречают их, обнаруживая в себе качества, о которых и не подозревали.'
 GOOGLE_IMAGE_URL = 'http://books.google.com/books/content?id=C3hWAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl'
 GOOGLE_FAKE_BOOK_ID = 'C3hWAgA4QBAP'
 
@@ -36,13 +38,15 @@ class AddBookViewTest(TestCase, AuthMixin):
             'title': TITLE,
             'author': AUTHOR,
             'comment': COMMENT,
-            'image': custom_image
+            'description': DESCRIPTION,
+            'image': custom_image,
         })
         self.assertEqual(account.books.all().count(), 1)
         book = account.books.all()[0]
 
         self.assertEqual(book.title, TITLE)
         self.assertEqual(book.author, AUTHOR)
+        self.assertEqual(book.description, DESCRIPTION)
         self.assertEqual(book.source, Book.SOURCE.CUSTOM)
         self.assertIn('book_' + str(book.id), book.image.name)
         self.assertEqual(book.comment, COMMENT)
@@ -55,7 +59,9 @@ class AddBookViewTest(TestCase, AuthMixin):
                 "success": True,
                 "book": {
                     "id": str(book.id),
-                    "description": {"title": TITLE, "author": AUTHOR, "image": book.image.url},
+                    "description": {
+                        "title": TITLE, "author": AUTHOR, "description": DESCRIPTION, "image": book.image.url
+                    },
                     "comment": COMMENT,
                     "active": True
                 }
@@ -72,6 +78,7 @@ class AddBookViewTest(TestCase, AuthMixin):
         response = self.client.post('/app/api/my-books/add/', {
             'title': TITLE,
             'author': AUTHOR,
+            'description': DESCRIPTION,
             'image': custom_image
         })
         self.assertEqual(account.books.all().count(), 1)
@@ -79,6 +86,7 @@ class AddBookViewTest(TestCase, AuthMixin):
 
         self.assertEqual(book.title, TITLE)
         self.assertEqual(book.author, AUTHOR)
+        self.assertEqual(book.description, DESCRIPTION)
         self.assertEqual(book.source, Book.SOURCE.CUSTOM)
         self.assertIn('book_' + str(book.id), book.image.name)
         self.assertEqual(book.comment, '')
@@ -91,7 +99,9 @@ class AddBookViewTest(TestCase, AuthMixin):
                 "success": True,
                 "book": {
                     "id": str(book.id),
-                    "description": {"title": TITLE, "author": AUTHOR, "image": book.image.url},
+                    "description": {
+                        "title": TITLE, "author": AUTHOR, "description": DESCRIPTION, "image": book.image.url
+                    },
                     "comment": "",
                     "active": True
                 }
@@ -99,7 +109,7 @@ class AddBookViewTest(TestCase, AuthMixin):
         )
 
     @override_settings(MEDIA_ROOT=tempfile.gettempdir())
-    def test_adding_with_full_correct_data_and_custom_image_no_author(self):
+    def test_adding_with_full_correct_data_and_custom_image_no_author_and_description(self):
         account = Account.objects.get(vk_id=VK_ID)
         self.auth_user(account)
 
@@ -127,7 +137,7 @@ class AddBookViewTest(TestCase, AuthMixin):
                 "success": True,
                 "book": {
                     "id": str(book.id),
-                    "description": {"title": TITLE, "author": "", "image": book.image.url},
+                    "description": {"title": TITLE, "author": "", "description": "", "image": book.image.url},
                     "comment": COMMENT,
                     "active": True
                 }
@@ -173,6 +183,7 @@ class AddBookViewTest(TestCase, AuthMixin):
         response = self.client.post('/app/api/my-books/add/', {
             'title': GOOGLE_TITLE,
             'author': GOOGLE_AUTHOR,
+            'description': GOOGLE_DESCRIPTION,
             'external_id': GOOGLE_BOOK_ID,
             'external_image': GOOGLE_IMAGE_URL,
             'comment': COMMENT,
@@ -182,6 +193,7 @@ class AddBookViewTest(TestCase, AuthMixin):
 
         self.assertEqual(book.title, GOOGLE_TITLE)
         self.assertEqual(book.author, GOOGLE_AUTHOR)
+        self.assertEqual(book.description, GOOGLE_DESCRIPTION)
         self.assertEqual(book.source, Book.SOURCE.GOOGLE)
         self.assertIn(GOOGLE_IMAGE_URL, book.image_external_url)
         self.assertEqual(book.comment, COMMENT)
@@ -197,6 +209,7 @@ class AddBookViewTest(TestCase, AuthMixin):
                     "description": {
                         "title": GOOGLE_TITLE,
                         "author": GOOGLE_AUTHOR,
+                        "description": GOOGLE_DESCRIPTION,
                         "image": book.image_external_url
                     },
                     "comment": COMMENT,
@@ -236,7 +249,8 @@ class AddBookViewTest(TestCase, AuthMixin):
                     "description": {
                         "title": GOOGLE_TITLE,
                         "author": GOOGLE_AUTHOR,
-                        "image": book.image_external_url
+                        "description": "",
+                        "image": book.image_external_url,
                     },
                     "comment": COMMENT,
                     "active": True

@@ -30,6 +30,7 @@ class Book(models.Model):
 
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255, null=True, blank=True)
+    description = models.TextField()
     source = models.SmallIntegerField(choices=SOURCE_CHOICES, default=SOURCE.CUSTOM)
     external_id = models.CharField(max_length=255, unique=True, null=True)
     image = models.ImageField(upload_to='books/', null=True)

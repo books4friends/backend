@@ -23,11 +23,11 @@ class BookSerializer:
             "description": {
                 "title": book.title,
                 "author": book.author,
+                "description": book.description,
                 "image": image,
             },
             "comment": book.comment,
             "active": book.status == Book.STATUS.ACTIVE,
-
         }
 
     @classmethod

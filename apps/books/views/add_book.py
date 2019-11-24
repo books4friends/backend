@@ -32,6 +32,7 @@ class AddMyBookView(View):
             account_id=self.request.session['account_id'],
             title=form.cleaned_data['title'],
             author=form.cleaned_data['author'],
+            description=form.cleaned_data['description'],
             comment=form.cleaned_data['comment']
         )
 
