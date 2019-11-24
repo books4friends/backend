@@ -145,6 +145,22 @@ class AddBookViewTest(TestCase, AuthMixin):
             {
                 "success": False,
                 "error_type": "FORM_NOT_VALID",
+                "errors": {"title": ["Обязательное поле."]}
+            }
+        )
+
+    @override_settings(LANGUAGE_CODE='en-US', LANGUAGES=(('en', 'English'),))
+    def test_no_data_english(self):
+        account = Account.objects.get(vk_id=VK_ID)
+        self.auth_user(account)
+        response = self.client.post('/app/api/my-books/add/', {})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            response.content.decode("utf-8"),
+            {
+                "success": False,
+                "error_type": "FORM_NOT_VALID",
                 "errors": {"title": ["This field is required."]}
             }
         )
