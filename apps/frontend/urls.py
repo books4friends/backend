@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^app/my-books/$', AppView.as_view(), name='app-my_books'),
     url(r'^app/settings/$', AppView.as_view(), name='app-settings'),
     url(r'^app/about/$', AppView.as_view(), name='app-about'),
+    url(r'^app/book/(?P<book_id>\d+)/$', AppView.as_view(), name='app-about'),
 ]
