@@ -26,7 +26,7 @@ class ActivateBookViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.book.status = Book.STATUS.NOT_ACTIVE
         self.book.save()
-        response = self.client.post('/app/api/my-books/{}/activate/'.format(self.book.id))
+        response = self.client.post('/api/app/my-books/{}/activate/'.format(self.book.id))
         self.book = Book.objects.get(id=self.book.id)
         self.assertJSONEqual(response.content.decode("utf-8"), {"success": True, 'book_id': self.book.id})
         self.assertEquals(response.status_code, 200)
@@ -36,7 +36,7 @@ class ActivateBookViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.book.status = Book.STATUS.ACTIVE
         self.book.save()
-        response = self.client.post('/app/api/my-books/{}/activate/'.format(self.book.id))
+        response = self.client.post('/api/app/my-books/{}/activate/'.format(self.book.id))
         self.assertEquals(response.status_code, 404)
         self.assertEquals(self.book.status, Book.STATUS.ACTIVE)
 
@@ -44,7 +44,7 @@ class ActivateBookViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.book.status = Book.STATUS.DELETED
         self.book.save()
-        response = self.client.post('/app/api/my-books/{}/activate/'.format(self.book.id))
+        response = self.client.post('/api/app/my-books/{}/activate/'.format(self.book.id))
         self.assertEquals(response.status_code, 404)
         self.book = Book.objects.get(id=self.book.id)
         self.assertEquals(self.book.status, Book.STATUS.DELETED)
@@ -53,7 +53,7 @@ class ActivateBookViewTest(TestCase, AuthMixin):
         self.auth_user(self.else_account)
         self.book.status = Book.STATUS.NOT_ACTIVE
         self.book.save()
-        response = self.client.post('/app/api/my-books/{}/activate/'.format(self.book.id))
+        response = self.client.post('/api/app/my-books/{}/activate/'.format(self.book.id))
         self.assertEquals(response.status_code, 404)
         self.book = Book.objects.get(id=self.book.id)
         self.assertEquals(self.book.status, Book.STATUS.NOT_ACTIVE)
@@ -72,7 +72,7 @@ class DeactivateBookViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.book.status = Book.STATUS.ACTIVE
         self.book.save()
-        response = self.client.post('/app/api/my-books/{}/deactivate/'.format(self.book.id))
+        response = self.client.post('/api/app/my-books/{}/deactivate/'.format(self.book.id))
         self.book = Book.objects.get(id=self.book.id)
         self.assertJSONEqual(response.content.decode("utf-8"), {"success": True, 'book_id': self.book.id})
         self.assertEquals(response.status_code, 200)
@@ -82,7 +82,7 @@ class DeactivateBookViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.book.status = Book.STATUS.NOT_ACTIVE
         self.book.save()
-        response = self.client.post('/app/api/my-books/{}/deactivate/'.format(self.book.id))
+        response = self.client.post('/api/app/my-books/{}/deactivate/'.format(self.book.id))
         self.assertEquals(response.status_code, 404)
         self.book = Book.objects.get(id=self.book.id)
         self.assertEquals(self.book.status, Book.STATUS.NOT_ACTIVE)
@@ -91,7 +91,7 @@ class DeactivateBookViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.book.status = Book.STATUS.DELETED
         self.book.save()
-        response = self.client.post('/app/api/my-books/{}/deactivate/'.format(self.book.id))
+        response = self.client.post('/api/app/my-books/{}/deactivate/'.format(self.book.id))
         self.assertEquals(response.status_code, 404)
         self.book = Book.objects.get(id=self.book.id)
         self.assertEquals(self.book.status, Book.STATUS.DELETED)
@@ -100,7 +100,7 @@ class DeactivateBookViewTest(TestCase, AuthMixin):
         self.auth_user(self.else_account)
         self.book.status = Book.STATUS.ACTIVE
         self.book.save()
-        response = self.client.post('/app/api/my-books/{}/deactivate/'.format(self.book.id))
+        response = self.client.post('/api/app/my-books/{}/deactivate/'.format(self.book.id))
         self.assertEquals(response.status_code, 404)
         self.book = Book.objects.get(id=self.book.id)
         self.assertEquals(self.book.status, Book.STATUS.ACTIVE)
@@ -119,7 +119,7 @@ class DeleteBookViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.book.status = Book.STATUS.ACTIVE
         self.book.save()
-        response = self.client.post('/app/api/my-books/{}/delete/'.format(self.book.id))
+        response = self.client.post('/api/app/my-books/{}/delete/'.format(self.book.id))
         self.book = Book.objects.get(id=self.book.id)
         self.assertJSONEqual(response.content.decode("utf-8"), {"success": True, 'book_id': self.book.id})
         self.assertEquals(response.status_code, 200)
@@ -129,7 +129,7 @@ class DeleteBookViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.book.status = Book.STATUS.NOT_ACTIVE
         self.book.save()
-        response = self.client.post('/app/api/my-books/{}/delete/'.format(self.book.id))
+        response = self.client.post('/api/app/my-books/{}/delete/'.format(self.book.id))
         self.book = Book.objects.get(id=self.book.id)
         self.assertJSONEqual(response.content.decode("utf-8"), {"success": True, 'book_id': self.book.id})
         self.assertEquals(response.status_code, 200)
@@ -139,7 +139,7 @@ class DeleteBookViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.book.status = Book.STATUS.DELETED
         self.book.save()
-        response = self.client.post('/app/api/my-books/{}/delete/'.format(self.book.id))
+        response = self.client.post('/api/app/my-books/{}/delete/'.format(self.book.id))
         self.assertEquals(response.status_code, 404)
         self.book = Book.objects.get(id=self.book.id)
         self.assertEquals(self.book.status, Book.STATUS.DELETED)
@@ -148,7 +148,7 @@ class DeleteBookViewTest(TestCase, AuthMixin):
         self.auth_user(self.else_account)
         self.book.status = Book.STATUS.ACTIVE
         self.book.save()
-        response = self.client.post('/app/api/my-books/{}/delete/'.format(self.book.id))
+        response = self.client.post('/api/app/my-books/{}/delete/'.format(self.book.id))
         self.assertEquals(response.status_code, 404)
         self.book = Book.objects.get(id=self.book.id)
         self.assertEquals(self.book.status, Book.STATUS.ACTIVE)
@@ -169,7 +169,7 @@ class EditBookCommentViewTest(TestCase, AuthMixin):
         self.book.status = Book.STATUS.ACTIVE
         self.book.save()
         response = self.client.post(
-            '/app/api/my-books/{}/edit-comment/'.format(self.book.id),
+            '/api/app/my-books/{}/edit-comment/'.format(self.book.id),
             json.dumps({'comment': NEW_COMMENT}),
             content_type="application/json"
         )
@@ -183,7 +183,7 @@ class EditBookCommentViewTest(TestCase, AuthMixin):
         self.book.status = Book.STATUS.NOT_ACTIVE
         self.book.save()
         response = self.client.post(
-            '/app/api/my-books/{}/edit-comment/'.format(self.book.id),
+            '/api/app/my-books/{}/edit-comment/'.format(self.book.id),
             json.dumps({'comment': NEW_COMMENT}),
             content_type="application/json"
         )
@@ -197,7 +197,7 @@ class EditBookCommentViewTest(TestCase, AuthMixin):
         self.book.status = Book.STATUS.DELETED
         self.book.save()
         response = self.client.post(
-            '/app/api/my-books/{}/edit-comment/'.format(self.book.id),
+            '/api/app/my-books/{}/edit-comment/'.format(self.book.id),
             json.dumps({'comment': NEW_COMMENT}),
             content_type="application/json"
         )
@@ -210,7 +210,7 @@ class EditBookCommentViewTest(TestCase, AuthMixin):
         self.book.status = Book.STATUS.ACTIVE
         self.book.save()
         response = self.client.post(
-            '/app/api/my-books/{}/edit-comment/'.format(self.book.id),
+            '/api/app/my-books/{}/edit-comment/'.format(self.book.id),
             json.dumps({'comment': NEW_COMMENT}),
             content_type="application/json"
         )

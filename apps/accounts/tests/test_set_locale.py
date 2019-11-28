@@ -15,7 +15,7 @@ class AccountSettingsViewTest(TestCase, AuthMixin):
     def test_set_russian_locale(self):
         self.auth_user(self.account)
         response = self.client.post(
-            '/app/api/settings/locale/set/',
+            '/api/app/settings/locale/set/',
             json.dumps({'locale': Account.LOCALE.RU}),
             content_type="application/json"
         )
@@ -26,7 +26,7 @@ class AccountSettingsViewTest(TestCase, AuthMixin):
     def test_set_english_locale(self):
         self.auth_user(self.account)
         response = self.client.post(
-            '/app/api/settings/locale/set/',
+            '/api/app/settings/locale/set/',
             json.dumps({'locale': Account.LOCALE.EN}),
             content_type="application/json"
         )
@@ -38,7 +38,7 @@ class AccountSettingsViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.account.locale = Account.LOCALE.RU
         response = self.client.post(
-            '/app/api/settings/locale/set/',
+            '/api/app/settings/locale/set/',
             json.dumps({'locale': Account.LOCALE.EN}),
             content_type="application/json"
         )
@@ -49,7 +49,7 @@ class AccountSettingsViewTest(TestCase, AuthMixin):
     def test_set_wrong_locale(self):
         self.auth_user(self.account)
         response = self.client.post(
-            '/app/api/settings/locale/set/',
+            '/api/app/settings/locale/set/',
             json.dumps({'locale': 'WL'}),
             content_type="application/json"
         )

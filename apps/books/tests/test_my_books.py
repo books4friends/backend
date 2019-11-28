@@ -29,7 +29,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
 
     def test_url_exists_at_desired_location(self):
         self.auth_user(self.account)
-        response = self.client.get('/app/api/my-books/')
+        response = self.client.get('/api/app/my-books/')
         self.assertEqual(response.status_code, 200)
 
     def test_custom_book(self):
@@ -44,7 +44,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
         self.auth_user(self.account)
-        response = self.client.get('/app/api/my-books/')
+        response = self.client.get('/api/app/my-books/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -75,7 +75,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
         self.auth_user(self.account)
-        response = self.client.get('/app/api/my-books/')
+        response = self.client.get('/api/app/my-books/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -105,7 +105,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
         self.auth_user(self.account)
-        response = self.client.get('/app/api/my-books/')
+        response = self.client.get('/api/app/my-books/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -129,7 +129,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
         self.auth_user(self.account)
-        response = self.client.get('/app/api/my-books/')
+        response = self.client.get('/api/app/my-books/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -152,7 +152,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
         self.auth_user(self.account)
-        response = self.client.get('/app/api/my-books/')
+        response = self.client.get('/api/app/my-books/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -174,7 +174,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
         self.auth_user(self.account)
-        response = self.client.get('/app/api/my-books/')
+        response = self.client.get('/api/app/my-books/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -195,7 +195,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
         self.auth_user(self.account)
-        response = self.client.get('/app/api/my-books/')
+        response = self.client.get('/api/app/my-books/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -218,7 +218,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
         self.auth_user(self.account)
-        response = self.client.get('/app/api/my-books/')
+        response = self.client.get('/api/app/my-books/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -241,7 +241,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
         self.auth_user(self.account)
-        response = self.client.get('/app/api/my-books/')
+        response = self.client.get('/api/app/my-books/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -252,7 +252,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
 
     def test_no_books(self):
         self.auth_user(self.account)
-        response = self.client.get('/app/api/my-books/')
+        response = self.client.get('/api/app/my-books/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -269,7 +269,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
         self.auth_user(Account.objects.create(vk_id=ELSE_ACCOUNT))
-        response = self.client.get('/app/api/my-books/')
+        response = self.client.get('/api/app/my-books/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -301,7 +301,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         )
 
         self.auth_user(self.account)
-        response = self.client.get('/app/api/my-books/')
+        response = self.client.get('/api/app/my-books/')
         self.assertEqual(response.status_code, 200)
 
         import json

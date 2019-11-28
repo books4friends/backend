@@ -12,12 +12,12 @@ class AccountSettingsViewTest(TestCase, AuthMixin):
 
     def test_url_exists_at_desired_location(self):
         self.auth_user(self.account)
-        response = self.client.get('/app/api/settings/')
+        response = self.client.get('/api/app/settings/')
         self.assertEqual(response.status_code, 200)
 
     def test_default_privacy(self):
         self.auth_user(self.account)
-        response = self.client.get('/app/api/settings/')
+        response = self.client.get('/api/app/settings/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -28,7 +28,7 @@ class AccountSettingsViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.account.privacy_type = Account.PRIVACY_TYPE.ONLY_OWNER
         self.account.save()
-        response = self.client.get('/app/api/settings/')
+        response = self.client.get('/api/app/settings/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),

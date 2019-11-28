@@ -33,13 +33,13 @@ class MyBooksListViewTest(TestCase, AuthMixin):
                 return_value=VK_USER)
     def test_url_exists_at_desired_location(self, _):
         self.auth_user(self.account)
-        response = self.client.get('/app/api/book/{}/'.format(self.book.id))
+        response = self.client.get('/api/app/book/{}/'.format(self.book.id))
         self.assertEqual(response.status_code, 200)
 
     @mock.patch('apps.books.views.book_detail.get_user_info', side_effect=None, return_value=VK_USER)
     def test_my_book(self, _):
         self.auth_user(self.account)
-        response = self.client.get('/app/api/book/{}/'.format(self.book.id))
+        response = self.client.get('/api/app/book/{}/'.format(self.book.id))
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -65,7 +65,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
     @mock.patch('apps.books.views.book_detail.get_friends_list', side_effect=None, return_value=[VK_USER])
     def test_friends_book(self, _):
         self.auth_user(self.account2)
-        response = self.client.get('/app/api/book/{}/'.format(self.book.id))
+        response = self.client.get('/api/app/book/{}/'.format(self.book.id))
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode("utf-8"),
@@ -91,5 +91,5 @@ class MyBooksListViewTest(TestCase, AuthMixin):
     @mock.patch('apps.books.views.book_detail.get_friends_list', side_effect=None, return_value=[])
     def test_else_book(self, _):
         self.auth_user(self.account2)
-        response = self.client.get('/app/api/book/{}/'.format(self.book.id))
+        response = self.client.get('/api/app/book/{}/'.format(self.book.id))
         self.assertEqual(response.status_code, 404)

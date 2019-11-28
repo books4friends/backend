@@ -19,14 +19,14 @@ class PrivacyFriendsListViewTest(TestCase, AuthMixin):
     @mock.patch('apps.accounts.views.update_privacy_settings_view.get_friends_list', side_effect=None, return_value=[])
     def test_url(self, _):
         self.auth_user(self.account)
-        response = self.client.get('/app/api/settings/privacy/friends/')
+        response = self.client.get('/api/app/settings/privacy/friends/')
         self.assertEqual(response.status_code, 200)
 
     @mock.patch('apps.accounts.views.update_privacy_settings_view.get_friends_list', side_effect=None,
                 return_value=[])
     def test_zero_friends(self, _):
         self.auth_user(self.account)
-        response = self.client.get('/app/api/settings/privacy/friends/')
+        response = self.client.get('/api/app/settings/privacy/friends/')
         self.assertJSONEqual(
             response.content.decode("utf-8"),
             {"success": True, "friends": []}
@@ -36,7 +36,7 @@ class PrivacyFriendsListViewTest(TestCase, AuthMixin):
                 return_value=[VK_FRIEND])
     def test_just_friend(self, _):
         self.auth_user(self.account)
-        response = self.client.get('/app/api/settings/privacy/friends/')
+        response = self.client.get('/api/app/settings/privacy/friends/')
         self.assertJSONEqual(
             response.content.decode("utf-8"),
             {"success": True, "friends": [{
@@ -54,7 +54,7 @@ class PrivacyFriendsListViewTest(TestCase, AuthMixin):
     def test_friend_in_whitelist(self, _):
         self.auth_user(self.account)
         FriendsWhiteList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND['external_id'])
-        response = self.client.get('/app/api/settings/privacy/friends/')
+        response = self.client.get('/api/app/settings/privacy/friends/')
         self.assertJSONEqual(
             response.content.decode("utf-8"),
             {"success": True, "friends": [{
@@ -72,7 +72,7 @@ class PrivacyFriendsListViewTest(TestCase, AuthMixin):
     def test_friend_in_blacklist(self, _):
         self.auth_user(self.account)
         FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND['external_id'])
-        response = self.client.get('/app/api/settings/privacy/friends/')
+        response = self.client.get('/api/app/settings/privacy/friends/')
         self.assertJSONEqual(
             response.content.decode("utf-8"),
             {"success": True, "friends": [{
@@ -93,7 +93,7 @@ class PrivacyFriendsListViewTest(TestCase, AuthMixin):
         FriendsWhiteList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
         FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
         FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_4['external_id'])
-        response = self.client.get('/app/api/settings/privacy/friends/')
+        response = self.client.get('/api/app/settings/privacy/friends/')
         response_json = json.loads(response.content)['friends'],
         response_json = response_json[0]
 
@@ -145,7 +145,7 @@ class PrivacyFriendsListViewTest(TestCase, AuthMixin):
         else_account = Account.objects.create(vk_id=ELSE_VK_ID)
         self.auth_user(else_account)
         FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND['external_id'])
-        response = self.client.get('/app/api/settings/privacy/friends/')
+        response = self.client.get('/api/app/settings/privacy/friends/')
         self.assertJSONEqual(
             response.content.decode("utf-8"),
             {"success": True, "friends": []}
@@ -156,7 +156,7 @@ class PrivacyFriendsListViewTest(TestCase, AuthMixin):
     def test_not_actual_data(self, _):
         self.auth_user(self.account)
         FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_2['external_id'])
-        response = self.client.get('/app/api/settings/privacy/friends/')
+        response = self.client.get('/api/app/settings/privacy/friends/')
         self.assertJSONEqual(
             response.content.decode("utf-8"),
             {"success": True, "friends": [{
@@ -178,7 +178,7 @@ class SetPrivacyAllFriendsViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.account.privacy_type = Account.PRIVACY_TYPE.EXCEPT_SOME_FRIENDS
         self.account.save()
-        response = self.client.post('/app/api/settings/privacy/set-all-friends/')
+        response = self.client.post('/api/app/settings/privacy/set-all-friends/')
         self.assertEqual(response.status_code, 200)
         account = Account.objects.get(vk_id=VK_ID)
         self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.ALL_FRIENDS)
@@ -188,7 +188,7 @@ class SetPrivacyAllFriendsViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.account.privacy_type = Account.PRIVACY_TYPE.ALL_FRIENDS
         self.account.save()
-        response = self.client.post('/app/api/settings/privacy/set-all-friends/')
+        response = self.client.post('/api/app/settings/privacy/set-all-friends/')
         self.assertEqual(response.status_code, 200)
         account = Account.objects.get(vk_id=VK_ID)
         self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.ALL_FRIENDS)
@@ -201,7 +201,7 @@ class SetPrivacyAllFriendsViewTest(TestCase, AuthMixin):
         FriendsWhiteList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_2['external_id'])
         FriendsWhiteList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
 
-        response = self.client.post('/app/api/settings/privacy/set-all-friends/')
+        response = self.client.post('/api/app/settings/privacy/set-all-friends/')
         account = Account.objects.get(vk_id=VK_ID)
 
         self.assertEqual(response.status_code, 200)
@@ -216,7 +216,7 @@ class SetPrivacyAllFriendsViewTest(TestCase, AuthMixin):
         FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_2['external_id'])
         FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
 
-        response = self.client.post('/app/api/settings/privacy/set-all-friends/')
+        response = self.client.post('/api/app/settings/privacy/set-all-friends/')
         account = Account.objects.get(vk_id=VK_ID)
 
         self.assertEqual(response.status_code, 200)
@@ -232,7 +232,7 @@ class SetPrivacyAllFriendsViewTest(TestCase, AuthMixin):
         else_account.privacy_type = Account.PRIVACY_TYPE.ONLY_OWNER
         else_account.save()
 
-        response = self.client.post('/app/api/settings/privacy/set-all-friends/')
+        response = self.client.post('/api/app/settings/privacy/set-all-friends/')
         self.assertEqual(response.status_code, 200)
         account = Account.objects.get(vk_id=VK_ID)
         self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.ALL_FRIENDS)
@@ -249,7 +249,7 @@ class SetPrivacyOnlyOwnerViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.account.privacy_type = Account.PRIVACY_TYPE.EXCEPT_SOME_FRIENDS
         self.account.save()
-        response = self.client.post('/app/api/settings/privacy/set-only-owner/')
+        response = self.client.post('/api/app/settings/privacy/set-only-owner/')
         self.assertEqual(response.status_code, 200)
         account = Account.objects.get(vk_id=VK_ID)
         self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.ONLY_OWNER)
@@ -259,7 +259,7 @@ class SetPrivacyOnlyOwnerViewTest(TestCase, AuthMixin):
         self.auth_user(self.account)
         self.account.privacy_type = Account.PRIVACY_TYPE.ONLY_OWNER
         self.account.save()
-        response = self.client.post('/app/api/settings/privacy/set-only-owner/')
+        response = self.client.post('/api/app/settings/privacy/set-only-owner/')
         self.assertEqual(response.status_code, 200)
         account = Account.objects.get(vk_id=VK_ID)
         self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.ONLY_OWNER)
@@ -272,7 +272,7 @@ class SetPrivacyOnlyOwnerViewTest(TestCase, AuthMixin):
         FriendsWhiteList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_2['external_id'])
         FriendsWhiteList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
 
-        response = self.client.post('/app/api/settings/privacy/set-only-owner/')
+        response = self.client.post('/api/app/settings/privacy/set-only-owner/')
         account = Account.objects.get(vk_id=VK_ID)
 
         self.assertEqual(response.status_code, 200)
@@ -287,7 +287,7 @@ class SetPrivacyOnlyOwnerViewTest(TestCase, AuthMixin):
         FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_2['external_id'])
         FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
 
-        response = self.client.post('/app/api/settings/privacy/set-only-owner/')
+        response = self.client.post('/api/app/settings/privacy/set-only-owner/')
         account = Account.objects.get(vk_id=VK_ID)
 
         self.assertEqual(response.status_code, 200)
@@ -303,7 +303,7 @@ class SetPrivacyOnlyOwnerViewTest(TestCase, AuthMixin):
         else_account.privacy_type = Account.PRIVACY_TYPE.ALL_FRIENDS
         else_account.save()
 
-        response = self.client.post('/app/api/settings/privacy/set-only-owner/')
+        response = self.client.post('/api/app/settings/privacy/set-only-owner/')
         self.assertEqual(response.status_code, 200)
         account = Account.objects.get(vk_id=VK_ID)
         self.assertEqual(account.privacy_type, Account.PRIVACY_TYPE.ONLY_OWNER)
@@ -321,7 +321,7 @@ class SetPrivacySomeFriendsViewTest(TestCase, AuthMixin):
         self.account.privacy_type = Account.PRIVACY_TYPE.ALL_FRIENDS
         self.account.save()
         response = self.client.post(
-            '/app/api/settings/privacy/set-some-friends/',
+            '/api/app/settings/privacy/set-some-friends/',
             json.dumps({'selected_friends': [VK_FRIEND_2['external_id'], VK_FRIEND_3['external_id']]}),
             content_type="application/json"
         )
@@ -341,7 +341,7 @@ class SetPrivacySomeFriendsViewTest(TestCase, AuthMixin):
         FriendsWhiteList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
         self.account.save()
         response = self.client.post(
-            '/app/api/settings/privacy/set-some-friends/',
+            '/api/app/settings/privacy/set-some-friends/',
             json.dumps({'selected_friends': [VK_FRIEND_3['external_id'], VK_FRIEND_4['external_id']]}),
             content_type="application/json"
         )
@@ -361,7 +361,7 @@ class SetPrivacySomeFriendsViewTest(TestCase, AuthMixin):
         FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
 
         response = self.client.post(
-            '/app/api/settings/privacy/set-some-friends/',
+            '/api/app/settings/privacy/set-some-friends/',
             json.dumps({'selected_friends': [VK_FRIEND_3['external_id'], VK_FRIEND_4['external_id']]}),
             content_type="application/json"
         )
@@ -387,7 +387,7 @@ class SetPrivacySomeFriendsViewTest(TestCase, AuthMixin):
         else_account.save()
 
         response = self.client.post(
-            '/app/api/settings/privacy/set-some-friends/',
+            '/api/app/settings/privacy/set-some-friends/',
             json.dumps({'selected_friends': [VK_FRIEND_2['external_id'], VK_FRIEND_3['external_id']]}),
             content_type="application/json"
         )
@@ -408,7 +408,7 @@ class SetPrivacyExceptSomeFriendsViewTest(TestCase, AuthMixin):
         self.account.privacy_type = Account.PRIVACY_TYPE.ALL_FRIENDS
         self.account.save()
         response = self.client.post(
-            '/app/api/settings/privacy/set-except-some-friends/',
+            '/api/app/settings/privacy/set-except-some-friends/',
             json.dumps({'selected_friends': [VK_FRIEND_2['external_id'], VK_FRIEND_3['external_id']]}),
             content_type="application/json"
         )
@@ -428,7 +428,7 @@ class SetPrivacyExceptSomeFriendsViewTest(TestCase, AuthMixin):
         FriendsBlackList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
         self.account.save()
         response = self.client.post(
-            '/app/api/settings/privacy/set-except-some-friends/',
+            '/api/app/settings/privacy/set-except-some-friends/',
             json.dumps({'selected_friends': [VK_FRIEND_3['external_id'], VK_FRIEND_4['external_id']]}),
             content_type="application/json"
         )
@@ -448,7 +448,7 @@ class SetPrivacyExceptSomeFriendsViewTest(TestCase, AuthMixin):
         FriendsWhiteList.objects.create(owner=self.account, friend_ext_id=VK_FRIEND_3['external_id'])
 
         response = self.client.post(
-            '/app/api/settings/privacy/set-except-some-friends/',
+            '/api/app/settings/privacy/set-except-some-friends/',
             json.dumps({'selected_friends': [VK_FRIEND_3['external_id'], VK_FRIEND_4['external_id']]}),
             content_type="application/json"
         )
@@ -474,7 +474,7 @@ class SetPrivacyExceptSomeFriendsViewTest(TestCase, AuthMixin):
         else_account.save()
 
         response = self.client.post(
-            '/app/api/settings/privacy/set-except-some-friends/',
+            '/api/app/settings/privacy/set-except-some-friends/',
             json.dumps({'selected_friends': [VK_FRIEND_2['external_id'], VK_FRIEND_3['external_id']]}),
             content_type="application/json"
         )

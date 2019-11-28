@@ -34,7 +34,7 @@ class AddBookViewTest(TestCase, AuthMixin):
 
         custom_image = SimpleUploadedFile(
             name='test_image.jpg', content=open(IMAGE_PATH, 'rb').read(), content_type='image/jpeg')
-        response = self.client.post('/app/api/my-books/add/', {
+        response = self.client.post('/api/app/my-books/add/', {
             'title': TITLE,
             'author': AUTHOR,
             'comment': COMMENT,
@@ -75,7 +75,7 @@ class AddBookViewTest(TestCase, AuthMixin):
 
         custom_image = SimpleUploadedFile(
             name='test_image.jpg', content=open(IMAGE_PATH, 'rb').read(), content_type='image/jpeg')
-        response = self.client.post('/app/api/my-books/add/', {
+        response = self.client.post('/api/app/my-books/add/', {
             'title': TITLE,
             'author': AUTHOR,
             'description': DESCRIPTION,
@@ -115,7 +115,7 @@ class AddBookViewTest(TestCase, AuthMixin):
 
         custom_image = SimpleUploadedFile(
             name='test_image.jpg', content=open(IMAGE_PATH, 'rb').read(), content_type='image/jpeg')
-        response = self.client.post('/app/api/my-books/add/', {
+        response = self.client.post('/api/app/my-books/add/', {
             'title': TITLE,
             'comment': COMMENT,
             'image': custom_image
@@ -147,7 +147,7 @@ class AddBookViewTest(TestCase, AuthMixin):
     def test_no_data(self):
         account = Account.objects.get(vk_id=VK_ID)
         self.auth_user(account)
-        response = self.client.post('/app/api/my-books/add/', {})
+        response = self.client.post('/api/app/my-books/add/', {})
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
@@ -163,7 +163,7 @@ class AddBookViewTest(TestCase, AuthMixin):
     def test_no_data_english(self):
         account = Account.objects.get(vk_id=VK_ID)
         self.auth_user(account)
-        response = self.client.post('/app/api/my-books/add/', {})
+        response = self.client.post('/api/app/my-books/add/', {})
 
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
@@ -180,7 +180,7 @@ class AddBookViewTest(TestCase, AuthMixin):
         account = Account.objects.get(vk_id=VK_ID)
         self.auth_user(account)
 
-        response = self.client.post('/app/api/my-books/add/', {
+        response = self.client.post('/api/app/my-books/add/', {
             'title': GOOGLE_TITLE,
             'author': GOOGLE_AUTHOR,
             'description': GOOGLE_DESCRIPTION,
@@ -223,7 +223,7 @@ class AddBookViewTest(TestCase, AuthMixin):
         account = Account.objects.get(vk_id=VK_ID)
         self.auth_user(account)
 
-        response = self.client.post('/app/api/my-books/add/', {
+        response = self.client.post('/api/app/my-books/add/', {
             'title': GOOGLE_TITLE,
             'author': GOOGLE_AUTHOR,
             'external_image': GOOGLE_IMAGE_URL,
