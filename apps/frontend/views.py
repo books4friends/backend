@@ -1,5 +1,6 @@
 import datetime
 import os
+import json
 
 from django.shortcuts import render, redirect
 from django.views import View
@@ -11,6 +12,7 @@ from django.utils import translation
 from apps.accounts.models import Account, VkSession
 from apps.utils.auth import auth_decorator
 from apps.vk_service.api import check_token
+from apps.books.utils import get_genres_list
 
 
 class VkRedirectUrl(View):
@@ -76,6 +78,9 @@ class AppView(View):
     def get(self, request, *args, **kwargs):
         if request.session.get('vk_id') and request.session.get('access_token'):
             account = Account.objects.get(pk=request.session['account_id'])
-            return render(request, template_name='frontend/app.html', context={'locale': account.locale})
+            return render(request, template_name='frontend/app.html', context={
+                'locale': account.locale,
+                'genres': json.dumps(get_genres_list()),
+            })
         else:
             return redirect('login-form')

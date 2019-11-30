@@ -15,6 +15,7 @@ TITLE = 'Ходячий замок'
 AUTHOR = 'Диана Уинн Джонс'
 DESCRIPTION = 'Книги английской писательницы Дианы У. Джонс настолько ярки, что так и просятся на экран. По ее бестселлеру "Ходячий замок" знаменитый мультипликатор Хаяо Миядзаки ("Унесенные призраками"), обладатель "Золотого льва" - высшей награды Венецианского фестиваля, снял анимационный фильм, побивший в Японии рекорды кассовых сборов. Софи живет в сказочной стране, где ведьмы и русалки, семимильные сапоги и говорящие собаки - обычное дело. Поэтому, когда на нее обрушивается ужасное проклятие коварной Болотной Ведьмы, Софи ничего не остается, как обратиться за помощью к таинственному чародею Хоулу, обитающему в ходячем замке. Однако, чтобы освободиться от чар, Софи предстоит разгадать немало загадок и прожить в замке у Хоула гораздо дольше, чем она рассчитывала. А для этого нужно подружиться с огненным демоном, поймать падучую звезду, подслушать пение русалок, отыскать мандрагору и многое, многое другое.'
 GOOGLE_IMAGE_URL = 'http://books.google.com/books/content?id=C3hWAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl'
+GENRE = 9
 
 
 class MyBooksListViewTest(TestCase, AuthMixin):
@@ -26,6 +27,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             title=TITLE,
             author=AUTHOR,
             description=DESCRIPTION,
+            genre=GENRE,
             image_external_url=GOOGLE_IMAGE_URL,
         )
 
@@ -47,7 +49,8 @@ class MyBooksListViewTest(TestCase, AuthMixin):
                 'book': {
                     "id": str(self.book.id),
                     "description": {
-                        "title": TITLE, "author": AUTHOR, "image": GOOGLE_IMAGE_URL, "description": DESCRIPTION
+                        "title": TITLE, "author": AUTHOR, "image": GOOGLE_IMAGE_URL, "description": DESCRIPTION,
+                        "genre": GENRE
                     },
                     "comment": '',
                     "active": True
@@ -73,7 +76,8 @@ class MyBooksListViewTest(TestCase, AuthMixin):
                 'book': {
                     "id": str(self.book.id),
                     "description": {
-                        "title": TITLE, "author": AUTHOR, "image": GOOGLE_IMAGE_URL, "description": DESCRIPTION
+                        "title": TITLE, "author": AUTHOR, "image": GOOGLE_IMAGE_URL, "description": DESCRIPTION,
+                        "genre": GENRE,
                     },
                     "comment": '',
                     "active": True

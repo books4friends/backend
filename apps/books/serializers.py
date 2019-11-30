@@ -24,6 +24,7 @@ class BookSerializer:
                 "title": book.title,
                 "author": book.author,
                 "description": book.description,
+                "genre": int(book.genre) if book.genre else None,
                 "image": image,
             },
             "comment": book.comment,

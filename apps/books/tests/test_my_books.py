@@ -12,12 +12,15 @@ ELSE_ACCOUNT = 'ELSE_ACCOUNT'
 TITLE = 'Ходячий замок'
 AUTHOR = 'Диана Уинн Джонс'
 DESCRIPTION = 'Книги английской писательницы Дианы У. Джонс настолько ярки, что так и просятся на экран. По ее бестселлеру "Ходячий замок" знаменитый мультипликатор Хаяо Миядзаки ("Унесенные призраками"), обладатель "Золотого льва" - высшей награды Венецианского фестиваля, снял анимационный фильм, побивший в Японии рекорды кассовых сборов. Софи живет в сказочной стране, где ведьмы и русалки, семимильные сапоги и говорящие собаки - обычное дело. Поэтому, когда на нее обрушивается ужасное проклятие коварной Болотной Ведьмы, Софи ничего не остается, как обратиться за помощью к таинственному чародею Хоулу, обитающему в ходячем замке. Однако, чтобы освободиться от чар, Софи предстоит разгадать немало загадок и прожить в замке у Хоула гораздо дольше, чем она рассчитывала. А для этого нужно подружиться с огненным демоном, поймать падучую звезду, подслушать пение русалок, отыскать мандрагору и многое, многое другое.'
+GENRE = 9
 TITLE_2 = 'Мать'
 AUTHOR_2 = 'Максим Горький'
 DESCRIPTION_2 = 'В романе изображена борьба революционеров-подпольщиков против царского правительства. Главная героиня – мать лидера революционного движения рабочих предместий, пожилая жительница, проникшаяся идеями своего сына и его товарищей о справедливости, правде, борьбе за лучшую жизнь. Сначала страшась, но постепенно вливаясь в волну народного неприятия и нарастающего сопротивления сложившейся мрачной и убогой жизни, уготованной ему власть имущими и хозяевами жизни, вставшая в ряды революционеров вслед за своим сыном, невзирая на неотвратимо грядущие поимку жандармами, несправедливый суд.'
+GENRE_2 = 5
 TITLE_3 = 'Манюня'
 AUTHOR_3 = 'Наринэ Абгарян'
 DESCRIPTION_3 = '"Манюня" - светлый, пропитанный солнцем и запахами южного базара и потрясающе смешной рассказ о детстве, о двух девочках-подружках Наре и Манюне, о грозной и доброй Ба - бабушке Манюни, и о куче их родственников, постоянно попадающих в казусные ситуации. Это то самое теплое, озорное и полное веселых приключений детство, которое делает человека счастливым на всю жизнь.'
+GENRE_3 = 12
 COMMENT = 'Могу подарить'
 IMAGE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'tests/custom_image.jpg')
 GOOGLE_IMAGE_URL = 'http://books.google.com/books/content?id=C3hWAgAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl'
@@ -40,6 +43,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             title=TITLE,
             author=AUTHOR,
             description=DESCRIPTION,
+            genre=GENRE,
             image=custom_image,
         )
 
@@ -52,7 +56,8 @@ class MyBooksListViewTest(TestCase, AuthMixin):
                 "books": [{
                     "id": str(book.id),
                     "description": {
-                        "title": TITLE, "author": AUTHOR, "image": book.image.url, "description": DESCRIPTION
+                        "title": TITLE, "author": AUTHOR, "image": book.image.url, "description": DESCRIPTION,
+                        "genre": GENRE,
                     },
                     "comment": '',
                     "active": True
@@ -70,6 +75,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             image_external_url=GOOGLE_IMAGE_URL,
             title=TITLE,
             author=AUTHOR,
+            genre=GENRE,
             description=DESCRIPTION,
             source=Book.SOURCE.GOOGLE,
         )
@@ -87,6 +93,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
                         "author": AUTHOR,
                         "description": DESCRIPTION,
                         "image": book.image.url,
+                        "genre": GENRE,
                     },
                     "comment": '',
                     "active": True
@@ -100,6 +107,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             title=TITLE,
             author=AUTHOR,
             description=DESCRIPTION,
+            genre=GENRE,
             source=Book.SOURCE.GOOGLE,
             image_external_url=GOOGLE_IMAGE_URL,
         )
@@ -113,7 +121,8 @@ class MyBooksListViewTest(TestCase, AuthMixin):
                 "books": [{
                     "id": str(book.id),
                     "description": {
-                        "title": TITLE, "author": AUTHOR, "image": GOOGLE_IMAGE_URL, "description": DESCRIPTION
+                        "title": TITLE, "author": AUTHOR, "image": GOOGLE_IMAGE_URL, "description": DESCRIPTION,
+                        "genre": GENRE,
                     },
                     "comment": '',
                     "active": True
@@ -136,7 +145,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             {
                 "books": [{
                     "id": str(book.id),
-                    "description": {"title": TITLE, "author": AUTHOR, "description": "", "image": None},
+                    "description": {"title": TITLE, "author": AUTHOR, "description": "", "image": None, "genre": None},
                     "comment": '',
                     "active": True
                 }]
@@ -159,7 +168,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             {
                 "books": [{
                     "id": str(book.id),
-                    "description": {"title": TITLE, "author": AUTHOR, "description": "", "image": None},
+                    "description": {"title": TITLE, "author": AUTHOR, "description": "", "image": None, "genre": None},
                     "comment": COMMENT,
                     "active": True
                 }]
@@ -181,7 +190,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             {
                 "books": [{
                     "id": str(book.id),
-                    "description": {"title": TITLE, "author": AUTHOR, "description": "", "image": None},
+                    "description": {"title": TITLE, "author": AUTHOR, "description": "", "image": None, "genre": None},
                     "comment": "",
                     "active": True
                 }]
@@ -202,7 +211,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             {
                 "books": [{
                     "id": str(book.id),
-                    "description": {"title": TITLE, "author": None, "description": "", "image": None},
+                    "description": {"title": TITLE, "author": None, "description": "", "image": None, "genre": None,},
                     "comment": "",
                     "active": True
                 }]
@@ -225,7 +234,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             {
                 "books": [{
                     "id": str(book.id),
-                    "description": {"title": TITLE, "author": AUTHOR, "description": "", "image": None},
+                    "description": {"title": TITLE, "author": AUTHOR, "description": "", "image": None, "genre": None},
                     "comment": "",
                     "active": False
                 }]
@@ -284,12 +293,14 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             title=TITLE,
             author=AUTHOR,
             description=DESCRIPTION,
+            genre=GENRE,
         )
         book2 = self.book = Book.objects.create(
             account=self.account,
             title=TITLE_2,
             author=AUTHOR_2,
             description=DESCRIPTION_2,
+            genre=GENRE_2,
             status=Book.STATUS.NOT_ACTIVE
         )
         book3 = self.book = Book.objects.create(
@@ -297,6 +308,7 @@ class MyBooksListViewTest(TestCase, AuthMixin):
             title=TITLE_3,
             author=AUTHOR_3,
             description=DESCRIPTION_3,
+            genre=GENRE_3,
             status=Book.STATUS.DELETED
         )
 
@@ -312,7 +324,8 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         self.assertEquals(
             response_json[1], {
                 "id": str(book1.id),
-                "description": {"title": TITLE, "author": AUTHOR, "description": DESCRIPTION, "image": None},
+                "description": {"title": TITLE, "author": AUTHOR, "description": DESCRIPTION, "genre": GENRE,
+                                "image": None,},
                 "comment": "",
                 "active": True
             }
@@ -320,7 +333,8 @@ class MyBooksListViewTest(TestCase, AuthMixin):
         self.assertEquals(
             response_json[0], {
                 "id": str(book2.id),
-                "description": {"title": TITLE_2, "author": AUTHOR_2, "description": DESCRIPTION_2, "image": None},
+                "description": {"title": TITLE_2, "author": AUTHOR_2, "description": DESCRIPTION_2, "genre": GENRE_2,
+                                "image": None,},
                 "comment": "",
                 "active": False
             }

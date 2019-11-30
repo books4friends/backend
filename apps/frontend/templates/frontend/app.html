@@ -15,11 +15,14 @@
         <strong>We're sorry but frontend doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <script id="config" type="text/json">
-        {% if locale %}
-            {"locale": "{{locale}}"}
-        {% else %}
-            {"locale": "undefined"}
-        {% endif %}
+        {
+            {% if locale %}
+                "locale": "{{locale}}",
+            {% else %}
+                "locale": "undefined",
+            {% endif %}
+            "genres": {{ genres | safe }}
+        }
     </script>
     <div id="app">
     </div>

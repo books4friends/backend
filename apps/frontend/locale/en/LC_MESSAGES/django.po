@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-23 17:01+0000\n"
+"POT-Creation-Date: 2019-11-28 10:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,18 +18,65 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: project/settings/base.py:142
-msgid "Russian"
-msgstr ""
+msgid "genre_action"
+msgstr "Action/suspense"
 
-#: project/settings/base.py:143
-msgid "English"
-msgstr ""
+msgid "genre_adventures"
+msgstr "Adventures"
+
+msgid "genre_biographies"
+msgstr "Biographies and memoirs"
+
+msgid "genre_business"
+msgstr "Business books"
+
+msgid "genre_children"
+msgstr "Children's books"
+
+msgid "genre_classics"
+msgstr "Classics"
+
+msgid "genre_comics"
+msgstr "Comics"
+
+msgid "genre_culture"
+msgstr "Culture and art"
+
+msgid "genre_detectives"
+msgstr "Detectives"
+
+msgid "genre_fantasy"
+msgstr "Fantasy"
+
+msgid "genre_hobby"
+msgstr "Hobby"
+
+msgid "genre_language"
+msgstr "Language learning"
+
+msgid "genre_modern_prose"
+msgstr "Modern prose"
+
+msgid "genre_poetry"
+msgstr "Poetry"
+
+msgid "genre_popular_science"
+msgstr "Popular Science"
+
+msgid "genre_psychology"
+msgstr "Psychology, motivation"
+
+msgid "genre_romance"
+msgstr "Romance"
+
+msgid "genre_education"
+msgstr "Science and education"
 
 #: apps/frontend/templates/frontend/app.html:11
 msgid "Friends book"
 msgstr "Friends book"
 
-#: apps/frontend/templates/frontend/login_form.html:7
+#: apps/frontend/templates/frontend/login_form.html:8
 msgid "authorize"
 msgstr "Authorize"
+

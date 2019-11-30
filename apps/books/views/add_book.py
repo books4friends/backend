@@ -33,7 +33,8 @@ class AddMyBookView(View):
             title=form.cleaned_data['title'],
             author=form.cleaned_data['author'],
             description=form.cleaned_data['description'],
-            comment=form.cleaned_data['comment']
+            comment=form.cleaned_data['comment'],
+            genre=form.cleaned_data['genre'] or None,
         )
 
         if form.cleaned_data['external_id']:

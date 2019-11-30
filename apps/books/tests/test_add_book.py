@@ -12,6 +12,7 @@ from apps.books.models import Book
 VK_ID = 'VK_ID'
 TITLE = 'Ходячий замок'
 AUTHOR = 'Диана Уинн Джонс'
+GENRE = 9
 DESCRIPTION = 'Книги английской писательницы Дианы У. Джонс настолько ярки, что так и просятся на экран. По ее бестселлеру "Ходячий замок" знаменитый мультипликатор Хаяо Миядзаки ("Унесенные призраками"), обладатель "Золотого льва" - высшей награды Венецианского фестиваля, снял анимационный фильм, побивший в Японии рекорды кассовых сборов. Софи живет в сказочной стране, где ведьмы и русалки, семимильные сапоги и говорящие собаки - обычное дело. Поэтому, когда на нее обрушивается ужасное проклятие коварной Болотной Ведьмы, Софи ничего не остается, как обратиться за помощью к таинственному чародею Хоулу, обитающему в ходячем замке. Однако, чтобы освободиться от чар, Софи предстоит разгадать немало загадок и прожить в замке у Хоула гораздо дольше, чем она рассчитывала. А для этого нужно подружиться с огненным демоном, поймать падучую звезду, подслушать пение русалок, отыскать мандрагору и многое, многое другое.'
 COMMENT = 'Могу подарить'
 IMAGE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'tests/custom_image.jpg')
@@ -38,6 +39,7 @@ class AddBookViewTest(TestCase, AuthMixin):
             'title': TITLE,
             'author': AUTHOR,
             'comment': COMMENT,
+            'genre': GENRE,
             'description': DESCRIPTION,
             'image': custom_image,
         })
@@ -46,6 +48,7 @@ class AddBookViewTest(TestCase, AuthMixin):
 
         self.assertEqual(book.title, TITLE)
         self.assertEqual(book.author, AUTHOR)
+        self.assertEqual(book.genre, GENRE)
         self.assertEqual(book.description, DESCRIPTION)
         self.assertEqual(book.source, Book.SOURCE.CUSTOM)
         self.assertIn('book_' + str(book.id), book.image.name)
@@ -60,7 +63,8 @@ class AddBookViewTest(TestCase, AuthMixin):
                 "book": {
                     "id": str(book.id),
                     "description": {
-                        "title": TITLE, "author": AUTHOR, "description": DESCRIPTION, "image": book.image.url
+                        "title": TITLE, "author": AUTHOR, "description": DESCRIPTION,
+                        "genre": GENRE, "image": book.image.url,
                     },
                     "comment": COMMENT,
                     "active": True
@@ -79,7 +83,8 @@ class AddBookViewTest(TestCase, AuthMixin):
             'title': TITLE,
             'author': AUTHOR,
             'description': DESCRIPTION,
-            'image': custom_image
+            'genre': GENRE,
+            'image': custom_image,
         })
         self.assertEqual(account.books.all().count(), 1)
         book = account.books.all()[0]
@@ -87,6 +92,7 @@ class AddBookViewTest(TestCase, AuthMixin):
         self.assertEqual(book.title, TITLE)
         self.assertEqual(book.author, AUTHOR)
         self.assertEqual(book.description, DESCRIPTION)
+        self.assertEqual(book.genre, GENRE)
         self.assertEqual(book.source, Book.SOURCE.CUSTOM)
         self.assertIn('book_' + str(book.id), book.image.name)
         self.assertEqual(book.comment, '')
@@ -100,7 +106,8 @@ class AddBookViewTest(TestCase, AuthMixin):
                 "book": {
                     "id": str(book.id),
                     "description": {
-                        "title": TITLE, "author": AUTHOR, "description": DESCRIPTION, "image": book.image.url
+                        "title": TITLE, "author": AUTHOR, "description": DESCRIPTION,
+                        "image": book.image.url, "genre": GENRE,
                     },
                     "comment": "",
                     "active": True
@@ -118,6 +125,7 @@ class AddBookViewTest(TestCase, AuthMixin):
         response = self.client.post('/api/app/my-books/add/', {
             'title': TITLE,
             'comment': COMMENT,
+            'genre': GENRE,
             'image': custom_image
         })
         self.assertEqual(account.books.all().count(), 1)
@@ -125,6 +133,7 @@ class AddBookViewTest(TestCase, AuthMixin):
 
         self.assertEqual(book.title, TITLE)
         self.assertEqual(book.author, '')
+        self.assertEqual(book.genre, GENRE)
         self.assertEqual(book.source, Book.SOURCE.CUSTOM)
         self.assertIn('book_' + str(book.id), book.image.name)
         self.assertEqual(book.comment, COMMENT)
@@ -137,7 +146,8 @@ class AddBookViewTest(TestCase, AuthMixin):
                 "success": True,
                 "book": {
                     "id": str(book.id),
-                    "description": {"title": TITLE, "author": "", "description": "", "image": book.image.url},
+                    "description": {"title": TITLE, "author": "", "description": "",
+                                    "image": book.image.url, "genre": GENRE, },
                     "comment": COMMENT,
                     "active": True
                 }
@@ -210,7 +220,8 @@ class AddBookViewTest(TestCase, AuthMixin):
                         "title": GOOGLE_TITLE,
                         "author": GOOGLE_AUTHOR,
                         "description": GOOGLE_DESCRIPTION,
-                        "image": book.image_external_url
+                        "image": book.image_external_url,
+                        "genre": None,
                     },
                     "comment": COMMENT,
                     "active": True
@@ -251,6 +262,7 @@ class AddBookViewTest(TestCase, AuthMixin):
                         "author": GOOGLE_AUTHOR,
                         "description": "",
                         "image": book.image_external_url,
+                        "genre":  None,
                     },
                     "comment": COMMENT,
                     "active": True

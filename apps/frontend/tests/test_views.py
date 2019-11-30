@@ -2,6 +2,8 @@ from django.test import TestCase
 
 from unittest import mock
 import datetime
+import json
+from django.utils import translation
 
 from apps.accounts.models import Account
 from .utils import AuthMixin, get_expires_at, EXPIRES_IN
@@ -171,3 +173,25 @@ class LogoutViewTest(TestCase, AuthMixin):
         self.assertFalse('access_token' in session)
         self.assertFalse('account_id' in session)
         self.assertFalse('vk_id' in session)
+
+
+class GenreLoaderTest(TestCase, AuthMixin):
+    def setUp(self):
+        self.account = Account.objects.create(vk_id=VK_ID)
+
+    def test_load_genres_ru(self):
+        self.auth_user(account=self.account)
+        self.account.locale = Account.LOCALE.RU
+        self.account.save()
+        response = self.client.get('/app/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, json.dumps('Любовные романы'))
+
+    def test_load_genres_eng(self):
+        self.auth_user(account=self.account)
+        session = self.client.session
+        session[translation.LANGUAGE_SESSION_KEY] = 'en'
+        session.save()
+        response = self.client.get('/app/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '{"index": 16, "slug": "romance", "title": "Romance"}')

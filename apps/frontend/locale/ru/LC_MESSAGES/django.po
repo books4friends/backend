@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-23 17:01+0000\n"
+"POT-Creation-Date: 2019-11-28 10:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,18 +20,64 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: project/settings/base.py:142
-msgid "Russian"
-msgstr ""
+msgid "genre_action"
+msgstr "Боевики, остросюжетная литература"
 
-#: project/settings/base.py:143
-msgid "English"
-msgstr ""
+msgid "genre_adventures"
+msgstr "Приключения"
+
+msgid "genre_biographies"
+msgstr "Биографии и мемуары"
+
+msgid "genre_business"
+msgstr "Бизнес-книги"
+
+msgid "genre_children"
+msgstr "Детские книги"
+
+msgid "genre_classics"
+msgstr "Классическая литература"
+
+msgid "genre_comics"
+msgstr "Комиксы"
+
+msgid "genre_culture"
+msgstr "Культура и искусство"
+
+msgid "genre_detectives"
+msgstr "Детективы"
+
+msgid "genre_fantasy"
+msgstr "Фантастика"
+
+msgid "genre_hobby"
+msgstr "Хобби, досуг"
+
+msgid "genre_language"
+msgstr "Изучение языков"
+
+msgid "genre_modern_prose"
+msgstr "Современная проза"
+
+msgid "genre_poetry"
+msgstr "Стихи, поэзия"
+
+msgid "genre_popular_science"
+msgstr "Научно-популярная литература"
+
+msgid "genre_psychology"
+msgstr "Психология, мотивация"
+
+msgid "genre_romance"
+msgstr "Любовные романы"
+
+msgid "genre_education"
+msgstr "Учебная и научная литература"
 
 #: apps/frontend/templates/frontend/app.html:11
 msgid "Friends book"
 msgstr "Книги друзей"
 
-#: apps/frontend/templates/frontend/login_form.html:7
+#: apps/frontend/templates/frontend/login_form.html:8
 msgid "authorize"
 msgstr "Авторизоваться"
