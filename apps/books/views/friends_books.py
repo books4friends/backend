@@ -118,6 +118,11 @@ class GetFriendsBooksListView(View):
             status=Book.STATUS.ACTIVE,
         )
 
+        if request.GET.get('genre') and request.GET.get('genre').isdigit():
+            genre = int(request.GET.get('genre'))
+            if 0 <= genre < len(Book.GENRES):
+                books = books.filter(genre=genre)
+
         if request.GET.get('search'):
             keywords = re.findall(r'\b\w+\b', request.GET.get('search'))
             keywords = [keyword.lower() for keyword in keywords]
