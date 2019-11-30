@@ -26,11 +26,18 @@ class Book(models.Model):
         (SOURCE.GOOGLE, 'google'),
     )
 
+    GENRES = ['action', 'adventures', 'biographies', 'business', 'children', 'classics', 'comics', 'culture',
+              'detectives', 'fantasy', 'hobby', 'language', 'modern_prose', 'poetry', 'popular_science', 'psychology',
+              'romance', 'education']
+
+    GENRE_CHOICES = tuple((index, key) for index, key in enumerate(GENRES))
+
     account = models.ForeignKey('accounts.Account', on_delete=models.PROTECT, related_name='books')
 
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField()
+    genre = models.SmallIntegerField(choices=GENRE_CHOICES, null=True)  # None is Other genre
     source = models.SmallIntegerField(choices=SOURCE_CHOICES, default=SOURCE.CUSTOM)
     external_id = models.CharField(max_length=255, unique=True, null=True)
     image = models.ImageField(upload_to='books/', null=True)
