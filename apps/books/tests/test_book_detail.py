@@ -1,8 +1,6 @@
 from django.test import TestCase
 
-import os
 from unittest import mock
-from django.core.files.uploadedfile import SimpleUploadedFile
 
 from apps.frontend.tests.utils import AuthMixin
 from apps.accounts.models import Account

@@ -9,6 +9,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     url('', include('apps.frontend.urls')),
     url(r'api/app/my-books/', include('apps.books.urls.my_books')),
+    url(r'api/app/borrows/', include('apps.borrows.urls')),
     url(r'api/app/friends-books/', include('apps.books.urls.friends_books')),
     url(r'api/app/book/', include('apps.books.urls.book')),
     url(r'api/app/settings/', include('apps.accounts.urls')),
