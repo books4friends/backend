@@ -5,9 +5,10 @@ from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 
+from apps.books.serializers import BookSerializer
 from apps.utils.auth import auth_decorator
 from apps.books.models import Book
-from apps.vk_service.api import get_friends_list
+from apps.vk_service.api import get_friends_list, get_users_info
 from .models import Borrow
 from .forms import CreateBorrowFrom
 
@@ -40,3 +41,30 @@ class CreateBorrowView(View):
         )
 
         return JsonResponse({'success': True})
+
+
+class MyBorrowsListView(View):
+    @auth_decorator
+    def get(self, request, *args, **kwargs):
+        account_id = request.session['account_id']
+        borrows = Borrow.objects.filter(borrower=account_id).order_by('real_return_date').\
+            prefetch_related('book', 'book__account')
+        friends_ids = [borrow.book.account.vk_id for borrow in borrows]
+        friends = get_users_info(request.session['access_token'], friends_ids)
+
+        return JsonResponse(self._serialize_borrows(borrows, friends))
+
+    def _serialize_borrows(self, borrows, friends):
+        friends_dict = {friend['external_id']: friend for friend in friends}
+        return {
+            "borrows": [{
+                "id": borrow.pk,
+                "owner": friends_dict[borrow.book.account.vk_id],
+                "book": BookSerializer.serialize(borrow.book),
+                "borrow_data": {
+                    "take_date": borrow.take_date,
+                    "planned_return_date": borrow.planned_return_date,
+                    "real_return_date": borrow.real_return_date,
+                }
+            } for borrow in borrows]
+        }

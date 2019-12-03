@@ -33,6 +33,13 @@ def get_user_info(access_token):
     return VkAccountSerializer.serialize(user)
 
 
+def get_users_info(access_token, user_ids):
+    session = vk.Session(access_token=access_token)
+    api = vk.API(session, v='5.35', lang='ru', timeout=10)
+    user = api.users.get(fields='first_name, last_name, photo_100, city', user_ids=user_ids)
+    return VkAccountSerializer.serialize(user)
+
+
 class VkAccountSerializer:
     @classmethod
     def serialize(cls, obj):
