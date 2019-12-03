@@ -5,12 +5,12 @@ from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 
-from apps.books.serializers import BookSerializer
 from apps.utils.auth import auth_decorator
 from apps.books.models import Book
 from apps.vk_service.api import get_friends_list, get_users_info
 from .models import Borrow
 from .forms import CreateBorrowFrom
+from .serializers import MyBorrowsSerializer, FriendBorrowsSerializer
 
 
 class CreateBorrowView(View):
@@ -48,23 +48,20 @@ class MyBorrowsListView(View):
     def get(self, request, *args, **kwargs):
         account_id = request.session['account_id']
         borrows = Borrow.objects.filter(borrower=account_id).order_by('real_return_date').\
-            prefetch_related('book', 'book__account')
+            prefetch_related('book', 'book__account').order_by('-id')
         friends_ids = [borrow.book.account.vk_id for borrow in borrows]
         friends = get_users_info(request.session['access_token'], friends_ids)
 
-        return JsonResponse(self._serialize_borrows(borrows, friends))
+        return JsonResponse(MyBorrowsSerializer.serialize(borrows, friends))
 
-    def _serialize_borrows(self, borrows, friends):
-        friends_dict = {friend['external_id']: friend for friend in friends}
-        return {
-            "borrows": [{
-                "id": borrow.pk,
-                "owner": friends_dict[borrow.book.account.vk_id],
-                "book": BookSerializer.serialize(borrow.book),
-                "borrow_data": {
-                    "take_date": borrow.take_date,
-                    "planned_return_date": borrow.planned_return_date,
-                    "real_return_date": borrow.real_return_date,
-                }
-            } for borrow in borrows]
-        }
+
+class FriendsBorrowsListView(View):
+    @auth_decorator
+    def get(self, request, *args, **kwargs):
+        account_id = request.session['account_id']
+        borrows = Borrow.objects.filter(book__account_id=account_id).order_by('real_return_date').\
+            prefetch_related('book').order_by('-id')
+        friends_ids = [borrow.borrower.vk_id for borrow in borrows]
+        friends = get_users_info(request.session['access_token'], friends_ids)
+
+        return JsonResponse(FriendBorrowsSerializer.serialize(borrows, friends))

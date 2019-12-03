@@ -43,10 +43,10 @@ class MyBorrowsListViewTest(TestCase, AuthMixin):
             real_return_date=CURRENT_DATE,
         )
 
-    @mock.patch('apps.borrows.views.get_users_info', side_effect=None, return_value=[VK_USER, VK_FRIEND_2])
+    @mock.patch('apps.borrows.views.get_users_info', side_effect=None, return_value=[VK_FRIEND, VK_FRIEND_2])
     def test_one_borrow(self, _):
-        self.auth_user(self.account_friend)
-        response = self.client.get('/api/app/borrows/my/')
+        self.auth_user(self.account_owner)
+        response = self.client.get('/api/app/borrows/friends/')
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             response.content.decode('utf-8'),
@@ -54,10 +54,10 @@ class MyBorrowsListViewTest(TestCase, AuthMixin):
                 "borrows": [{
                     'id': self.borrow.id,
                     'friend': {
-                        'external_id': VK_USER['external_id'],
-                        'name': VK_USER['name'],
-                        'image': VK_USER['image'],
-                        'city': VK_USER['city'],
+                        'external_id': VK_FRIEND['external_id'],
+                        'name': VK_FRIEND['name'],
+                        'image': VK_FRIEND['image'],
+                        'city': VK_FRIEND['city'],
                     },
                     "book": {
                         "id": str(self.book.id),
@@ -76,10 +76,10 @@ class MyBorrowsListViewTest(TestCase, AuthMixin):
                 }]
             })
 
-    @mock.patch('apps.borrows.views.get_users_info', side_effect=None, return_value=[VK_USER, VK_FRIEND_2])
+    @mock.patch('apps.borrows.views.get_users_info', side_effect=None, return_value=[VK_FRIEND, VK_FRIEND_2])
     def test_not_friend_borrow(self, _):
         self.auth_user(self.account_not_friend)
-        response = self.client.get('/api/app/borrows/my/')
+        response = self.client.get('/api/app/borrows/friends/')
         self.assertEqual(response.status_code, 200)
 
         self.assertJSONEqual(
@@ -88,22 +88,22 @@ class MyBorrowsListViewTest(TestCase, AuthMixin):
                 "borrows": []
             })
 
-    @mock.patch('apps.borrows.views.get_users_info', side_effect=None, return_value=[VK_USER, VK_FRIEND_2])
+    @mock.patch('apps.borrows.views.get_users_info', side_effect=None, return_value=[VK_FRIEND, VK_FRIEND_2])
     def test_two_borrows(self, _):
-        self.auth_user(self.account_friend)
+        self.auth_user(self.account_owner)
 
         book2 = Book.objects.create(
-            account=self.account_friend_2,
+            account=self.account_owner,
             title=TITLE,
         )
         borrow2 = Borrow.objects.create(
-            borrower=self.account_friend,
+            borrower=self.account_friend_2,
             book=book2,
             planned_return_date=TWO_WEEKS_AFTER,
             real_return_date=CURRENT_DATE,
         )
 
-        response = self.client.get('/api/app/borrows/my/')
+        response = self.client.get('/api/app/borrows/friends/')
         self.assertEqual(response.status_code, 200)
 
         self.assertJSONEqual(
@@ -134,10 +134,10 @@ class MyBorrowsListViewTest(TestCase, AuthMixin):
                 }, {
                     'id': self.borrow.id,
                     'friend': {
-                        'external_id': VK_USER['external_id'],
-                        'name': VK_USER['name'],
-                        'image': VK_USER['image'],
-                        'city': VK_USER['city'],
+                        'external_id': VK_FRIEND['external_id'],
+                        'name': VK_FRIEND['name'],
+                        'image': VK_FRIEND['image'],
+                        'city': VK_FRIEND['city'],
                     },
                     "book": {
                         "id": str(self.book.id),

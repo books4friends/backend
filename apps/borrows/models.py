@@ -10,3 +10,6 @@ class Borrow(models.Model):
     take_date = models.DateField(auto_now_add=True)
     planned_return_date = models.DateField()
     real_return_date = models.DateField(null=True)
+
+    class Meta:
+        ordering = ('-id',)
