@@ -1,7 +1,6 @@
 from django.test import TestCase
 
 from unittest import mock
-import json
 import datetime
 
 from apps.frontend.tests.utils import AuthMixin

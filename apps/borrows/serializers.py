@@ -1,21 +1,31 @@
+from .models import Borrow
 from apps.books.serializers import BookSerializer
 
 
 class BorrowSerializer(object):
     @classmethod
-    def serialize(cls, borrows, friends):
+    def serialize(cls, obj, friends):
+        if isinstance(obj, Borrow):
+            return cls._serialize_one(obj, friends)
+        else:
+            return cls._serialize_list(obj, friends)
+
+    @classmethod
+    def _serialize_list(cls, borrows, friends):
         friends_dict = {friend['external_id']: friend for friend in friends}
+        return [cls._serialize_one(borrow, friends_dict[cls._get_friend_external_id(borrow)]) for borrow in borrows]
+
+    @classmethod
+    def _serialize_one(cls, borrow, friend):
         return {
-            "borrows": [{
-                "id": borrow.pk,
-                "friend": friends_dict[cls._get_friend_external_id(borrow)],
-                "book": BookSerializer.serialize(borrow.book),
-                "borrow_data": {
-                    "take_date": borrow.take_date,
-                    "planned_return_date": borrow.planned_return_date,
-                    "real_return_date": borrow.real_return_date,
-                }
-            } for borrow in borrows]
+            "id": borrow.pk,
+            "friend": friend,
+            "book": BookSerializer.serialize(borrow.book),
+            "borrow_data": {
+                "take_date": borrow.take_date,
+                "planned_return_date": borrow.planned_return_date,
+                "real_return_date": borrow.real_return_date,
+            }
         }
 
     @classmethod

@@ -1,13 +1,14 @@
 from django.views import View
 
 import json
+import datetime
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 
 from apps.utils.auth import auth_decorator
 from apps.books.models import Book
-from apps.vk_service.api import get_friends_list, get_users_info
+from apps.vk_service.api import get_friends_list, get_users_info, get_user_info
 from .models import Borrow
 from .forms import CreateBorrowFrom
 from .serializers import MyBorrowsSerializer, FriendBorrowsSerializer
@@ -52,7 +53,7 @@ class MyBorrowsListView(View):
         friends_ids = [borrow.book.account.vk_id for borrow in borrows]
         friends = get_users_info(request.session['access_token'], friends_ids)
 
-        return JsonResponse(MyBorrowsSerializer.serialize(borrows, friends))
+        return JsonResponse({'borrows': MyBorrowsSerializer.serialize(borrows, friends)})
 
 
 class FriendsBorrowsListView(View):
@@ -64,4 +65,47 @@ class FriendsBorrowsListView(View):
         friends_ids = [borrow.borrower.vk_id for borrow in borrows]
         friends = get_users_info(request.session['access_token'], friends_ids)
 
-        return JsonResponse(FriendBorrowsSerializer.serialize(borrows, friends))
+        return JsonResponse({'borrows': FriendBorrowsSerializer.serialize(borrows, friends)})
+
+
+class BorrowDetailView(View):
+    @auth_decorator
+    def get(self, request, borrow_id, *args, **kwargs):
+        account_id = request.session['account_id']
+        borrow = get_object_or_404(
+            Borrow,
+            pk=borrow_id,
+        )
+
+        if borrow.borrower_id == account_id:
+            friend = get_user_info(request.session['access_token'], borrow.book.account.vk_id)
+            return JsonResponse({
+                'borrow': MyBorrowsSerializer.serialize(borrow, friend),
+                'owner_type': 'friend'
+            })
+
+        if borrow.book.account_id == account_id:
+            friend = get_user_info(request.session['access_token'], borrow.borrower.vk_id)
+            return JsonResponse({
+                'borrow': FriendBorrowsSerializer.serialize(borrow, friend),
+                'owner_type': 'self'
+            })
+
+        raise Http404('No Borrow matches the given query.')
+
+
+class ReturnBorrowView(View):
+    @auth_decorator
+    def post(self, request, borrow_id, *args, **kwargs):
+        borrow = get_object_or_404(
+            Borrow,
+            pk=borrow_id,
+            book__account_id=request.session['account_id'],
+        )
+
+        if borrow.real_return_date:
+            return JsonResponse({'success': False, 'error_type': 'ALREADY_RETURNED'})
+
+        borrow.real_return_date = datetime.date.today()
+        borrow.save(update_fields=['real_return_date'])
+        return JsonResponse({'success': True})

@@ -26,10 +26,13 @@ def check_token(access_token, vk_id):
             raise e
 
 
-def get_user_info(access_token):
+def get_user_info(access_token, vk_id):
     session = vk.Session(access_token=access_token)
     api = vk.API(session, v='5.35', lang='ru', timeout=10)
-    user = api.users.get(fields='first_name, last_name, photo_100, city')[0]
+    if vk_id:
+        user = api.users.get(fields='first_name, last_name, photo_100, city', user_ids=[vk_id])[0]
+    else:
+        user = api.users.get(fields='first_name, last_name, photo_100, city')[0]
     return VkAccountSerializer.serialize(user)
 
 
