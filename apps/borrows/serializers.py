@@ -25,6 +25,7 @@ class BorrowSerializer(object):
                 "take_date": borrow.take_date,
                 "planned_return_date": borrow.planned_return_date,
                 "real_return_date": borrow.real_return_date,
+                "status": borrow.get_status_display(),
             }
         }
 

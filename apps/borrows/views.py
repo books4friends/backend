@@ -28,7 +28,7 @@ class CreateBorrowView(View):
             status=Book.STATUS.ACTIVE
         )
 
-        if book.borrow_set.filter(real_return_date__isnull=True):
+        if book.borrow_set.filter(real_return_date__isnull=True, status__in=[Borrow.STATUS.NEW, Borrow.STATUS.Approve]):
             return JsonResponse({'success': False, 'error_type': 'ALREADY_TAKEN'})
 
         friends = get_friends_list(request.session['access_token'])
@@ -48,8 +48,8 @@ class MyBorrowsListView(View):
     @auth_decorator
     def get(self, request, *args, **kwargs):
         account_id = request.session['account_id']
-        borrows = Borrow.objects.filter(borrower=account_id).order_by('real_return_date').\
-            prefetch_related('book', 'book__account').order_by('-id')
+        borrows = Borrow.objects.filter(borrower=account_id, status__in=Borrow.VISIBLE_STATUSES).\
+            prefetch_related('book', 'book__account')
         friends_ids = [borrow.book.account.vk_id for borrow in borrows]
         friends = get_users_info(request.session['access_token'], friends_ids)
 
@@ -60,8 +60,8 @@ class FriendsBorrowsListView(View):
     @auth_decorator
     def get(self, request, *args, **kwargs):
         account_id = request.session['account_id']
-        borrows = Borrow.objects.filter(book__account_id=account_id).order_by('real_return_date').\
-            prefetch_related('book').order_by('-id')
+        borrows = Borrow.objects.filter(book__account_id=account_id, status__in=Borrow.VISIBLE_STATUSES).\
+            prefetch_related('book')
         friends_ids = [borrow.borrower.vk_id for borrow in borrows]
         friends = get_users_info(request.session['access_token'], friends_ids)
 
@@ -75,6 +75,7 @@ class BorrowDetailView(View):
         borrow = get_object_or_404(
             Borrow,
             pk=borrow_id,
+            status__in=Borrow.VISIBLE_STATUSES
         )
 
         if borrow.borrower_id == account_id:
@@ -94,6 +95,48 @@ class BorrowDetailView(View):
         raise Http404('No Borrow matches the given query.')
 
 
+class ApproveBorrowView(View):
+    @auth_decorator
+    def post(self, request, borrow_id, *args, **kwargs):
+        borrow = get_object_or_404(
+            Borrow,
+            pk=borrow_id,
+            status=Borrow.STATUS.NEW,
+            book__account_id=request.session['account_id'],
+        )
+        borrow.status = Borrow.STATUS.Approve
+        borrow.save(update_fields=['status'])
+        return JsonResponse({'success': True})
+
+
+class CancelBorrowView(View):
+    @auth_decorator
+    def post(self, request, borrow_id, *args, **kwargs):
+        borrow = get_object_or_404(
+            Borrow,
+            pk=borrow_id,
+            status=Borrow.STATUS.NEW,
+            borrower_id=request.session['account_id'],
+        )
+        borrow.status = Borrow.STATUS.CANCELED
+        borrow.save(update_fields=['status'])
+        return JsonResponse({'success': True})
+
+
+class RejectBorrowView(View):
+    @auth_decorator
+    def post(self, request, borrow_id, *args, **kwargs):
+        borrow = get_object_or_404(
+            Borrow,
+            pk=borrow_id,
+            status=Borrow.STATUS.NEW,
+            book__account_id=request.session['account_id'],
+        )
+        borrow.status = Borrow.STATUS.REJECTED
+        borrow.save(update_fields=['status'])
+        return JsonResponse({'success': True})
+
+
 class ReturnBorrowView(View):
     @auth_decorator
     def post(self, request, borrow_id, *args, **kwargs):
@@ -101,11 +144,10 @@ class ReturnBorrowView(View):
             Borrow,
             pk=borrow_id,
             book__account_id=request.session['account_id'],
+            status=Borrow.STATUS.Approve,
         )
 
-        if borrow.real_return_date:
-            return JsonResponse({'success': False, 'error_type': 'ALREADY_RETURNED'})
-
+        borrow.status = Borrow.STATUS.RETURNED
         borrow.real_return_date = datetime.date.today()
-        borrow.save(update_fields=['real_return_date'])
+        borrow.save(update_fields=['real_return_date', 'status'])
         return JsonResponse({'success': True})
