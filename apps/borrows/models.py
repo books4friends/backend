@@ -21,7 +21,7 @@ class Borrow(models.Model):
     )
     VISIBLE_STATUSES = [STATUS.NEW, STATUS.Approve, STATUS.RETURNED]
 
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='borrows')
     borrower = models.ForeignKey(Account, on_delete=models.CASCADE)
     take_date = models.DateField(auto_now_add=True)
     planned_return_date = models.DateField()

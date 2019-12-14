@@ -6,7 +6,7 @@ import operator
 from functools import reduce
 from constance import config
 
-from django.db.models import Q, F, Value
+from django.db.models import Q, F, Value, Exists
 from django.db.models.functions import Concat
 from django.core.cache import cache
 from django.http.response import JsonResponse
@@ -14,6 +14,7 @@ from django.http.response import JsonResponse
 from apps.utils.auth import auth_decorator
 
 from ..models import Book
+from apps.borrows.models import Borrow
 from ...vk_service.api import get_friends_list
 from ...accounts.models import Account
 from ..serializers import BookSerializer
@@ -135,7 +136,12 @@ class GetFriendsBooksListView(View):
         count = request.GET.get('count', config.BOOKS_AMOUNT_PER_PAGE)
         books = books[offset: offset+count]
 
-        return self._serialize_books(books, friends_list)
+        borrowed_books = list(Borrow.objects.filter(
+            book__in=list(books.values_list('id', flat=True)),
+            status__in=[Borrow.STATUS.NEW, Borrow.STATUS.Approve],
+        ).values_list('book__id', flat=True))
+
+        return self._serialize_books(books, friends_list, borrowed_books)
 
     @classmethod
     def filter_friends_by_city(cls, friends, city_id):
@@ -146,12 +152,13 @@ class GetFriendsBooksListView(View):
         return [friend for friend in friends if friend['account_id'] == friend_ext_id]
 
     @classmethod
-    def _serialize_books(cls, books, friends):
+    def _serialize_books(cls, books, friends, borrowed_books):
         friends_dict = {friend['account_id']: friend for friend in friends}
         return {
             "books": [{
                 "owner": friends_dict[book.account_id],
-                "item": BookSerializer.serialize(book)
+                "item": BookSerializer.serialize(book),
+                "borrowed": book.id in borrowed_books,
             } for book in books]
         }
 
