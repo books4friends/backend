@@ -1,6 +1,7 @@
 from django import forms
 
 import datetime
+from .models import BorrowReview
 
 
 class CreateBorrowFrom(forms.Form):
@@ -13,3 +14,8 @@ class CreateBorrowFrom(forms.Form):
         if planned_return_date < current_date :
             msg = u"planned_return_date should be greater than current date."
             self._errors["planned_return_date "] = self.error_class([msg])
+
+
+class CreateBorrowReviewForm(forms.Form):
+    keeping = forms.ChoiceField(choices=BorrowReview.KEEPING_CHOICES)
+    time = forms.ChoiceField(choices=BorrowReview.TIME_CHOICES)

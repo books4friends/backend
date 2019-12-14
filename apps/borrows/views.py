@@ -9,8 +9,8 @@ from django.http import Http404
 from apps.utils.auth import auth_decorator
 from apps.books.models import Book
 from apps.vk_service.api import get_friends_list, get_users_info, get_user_info
-from .models import Borrow
-from .forms import CreateBorrowFrom
+from .models import Borrow, BorrowReview
+from .forms import CreateBorrowFrom, CreateBorrowReviewForm
 from .serializers import MyBorrowsSerializer, FriendBorrowsSerializer
 
 
@@ -146,8 +146,19 @@ class ReturnBorrowView(View):
             book__account_id=request.session['account_id'],
             status=Borrow.STATUS.Approve,
         )
+        data = json.loads(request.body.decode('utf-8'))
+        review_form = CreateBorrowReviewForm(data)
+        if not review_form.is_valid():
+            return JsonResponse({'success': False, 'error_type': 'FORM_NOT_VALID', 'errors': review_form.errors})
 
         borrow.status = Borrow.STATUS.RETURNED
         borrow.real_return_date = datetime.date.today()
         borrow.save(update_fields=['real_return_date', 'status'])
+
+        BorrowReview.objects.create(
+            borrow=borrow,
+            keeping=review_form.cleaned_data['keeping'],
+            time=review_form.cleaned_data['time']
+        )
+
         return JsonResponse({'success': True})

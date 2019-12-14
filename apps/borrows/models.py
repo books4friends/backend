@@ -30,3 +30,30 @@ class Borrow(models.Model):
 
     class Meta:
         ordering = ('-id',)
+
+
+class BorrowReview(models.Model):
+    class KEEPING:
+        SAME = 0
+        SPOILED_A_LITTLE = 1
+        SPOILED = 2
+    KEEPING_CHOICES = (
+        (KEEPING.SAME, 'same'),
+        (KEEPING.SPOILED_A_LITTLE, 'spoiled a little'),
+        (KEEPING.SPOILED, 'spoiled'),
+    )
+
+    class TIME:
+        IN_TIME = 0
+        LATE_A_LITTLE = 1
+        LATE = 2
+    TIME_CHOICES = (
+        (TIME.IN_TIME, 'in time'),
+        (TIME.LATE_A_LITTLE, 'late a little'),
+        (TIME.LATE, 'late'),
+    )
+
+    borrow = models.ForeignKey(Borrow, on_delete=models.CASCADE)
+    keeping = models.PositiveSmallIntegerField(default=KEEPING.SAME, choices=KEEPING_CHOICES)
+    time = models.PositiveSmallIntegerField(default=TIME.IN_TIME, choices=TIME_CHOICES)
+
